@@ -110,6 +110,7 @@ input:focus, textarea:focus { outline:none; border-color:var(--accent-dim); }
 .md-body em     { color:var(--muted); font-style:italic; }
 .md-body code   { background:#1a1a1a; color:var(--accent); padding:1px 5px; font-size:11px; }
 .md-body ul     { padding-left:16px; margin-bottom:8px; }
+.md-body ul ul  { padding-left:18px; margin-top:4px; margin-bottom:4px; }
 .md-body li     { color:var(--muted); margin-bottom:2px; }
 .doc-text-ta    { width:100%; min-height:80px; background:var(--bg); border:1px solid var(--accent-dim); color:var(--text); font-family:var(--prose-font); font-size:14px; padding:10px; resize:none; outline:none; line-height:1.75; overflow-wrap:break-word; overflow:hidden; }
 .node-del-btn   { position:absolute; top:4px; right:0; opacity:0; padding:2px 7px; font-size:9px; }
