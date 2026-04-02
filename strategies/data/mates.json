@@ -3,37 +3,64 @@
     "EKiAKACA": {
       "t": "V Mate",
       "g": [
-        "Mate"
+        "Letters"
       ]
     },
     "EgqAIICA": {
       "t": "T Mate",
       "g": [
-        "Mate"
+        "Letters"
       ]
     },
-    "GAigIAiAAAAg": {
+    "GgqAIIAACA": {
       "t": "Y Mate",
       "g": [
-        "Mate"
+        "Letters"
       ]
     },
     "GAigIAgACAAg": {
       "t": "L Mate",
       "g": [
-        "Mate"
+        "Letters"
       ]
     },
     "EgqAIgCA": {
       "t": "Closed Scissors Mate",
       "g": [
-        "Mate"
+        "Scissors"
       ]
     },
     "EAigICiA": {
       "t": "Open Scissors Mate",
       "g": [
-        "Mate"
+        "Scissors"
+      ]
+    },
+    "GgqgAig": {
+      "t": "Double Is Mate",
+      "g": [
+        "Towers"
+      ]
+    },
+    "GKCgICgAAIA": {
+      "t": "Twin Towers Mate",
+      "g": [
+        "Towers",
+        "Potentially Impossible"
+      ]
+    },
+    "GKCgIAgAAIAg": {
+      "t": "Skewed Towers Mate",
+      "g": [
+        "Towers",
+        "Potentially Impossible"
+      ]
+    },
+    "IIAgIAgAAIAgAAAAIAg": {
+      "t": "Lightning Towers Mate",
+      "g": [
+        "Towers",
+        "Potentially Impossible"
       ]
     }
   }
