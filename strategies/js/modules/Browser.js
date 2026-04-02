@@ -135,7 +135,9 @@ const Browser = {
     el.appendChild(view);
     if (Browser._editable) {
       const ta = document.createElement('textarea'); ta.className = 'doc-text-ta'; ta.value = node.md || ''; ta.hidden = true; ta.placeholder = 'Markdown…';
-      view.addEventListener('click', () => { view.hidden = true; ta.hidden = false; ta.focus(); });
+      const autosize = () => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; };
+      view.addEventListener('click', () => { view.hidden = true; ta.hidden = false; autosize(); ta.focus(); });
+      ta.addEventListener('input', autosize);
       ta.addEventListener('blur', () => { node.md = ta.value; view.innerHTML = Markdown.render(node.md) || '<span class="md-placeholder">Click to edit…</span>'; view.hidden = false; ta.hidden = true; Browser._save(); });
       ta.addEventListener('keydown', e => { if (e.key === 'Escape') ta.blur(); });
       const del = Browser._btn('✕', () => { Doc.remove(Browser._doc, node.id); Browser._save(); Browser._renderDoc(); });
