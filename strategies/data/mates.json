@@ -45,22 +45,19 @@
     "GKCgICgAAIA": {
       "t": "Twin Towers Mate",
       "g": [
-        "Towers",
-        "Potentially Impossible"
+        "Towers"
       ]
     },
     "GKCgIAgAAIAg": {
       "t": "Skewed Towers Mate",
       "g": [
-        "Towers",
-        "Potentially Impossible"
+        "Towers"
       ]
     },
     "IIAgIAgAAIAgAAAAIAg": {
       "t": "Lightning Towers Mate",
       "g": [
-        "Towers",
-        "Potentially Impossible"
+        "Towers"
       ]
     }
   }
