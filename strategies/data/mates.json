@@ -1,60 +1,60 @@
 {
   "positions": {
-    "EKiAKACA": {
+    "EURAUAEA": {
       "t": "V Mate",
       "g": [
         "Letters"
       ]
     },
-    "EgqAIICA": {
+    "FBUAQQEA": {
       "t": "T Mate",
       "g": [
         "Letters"
       ]
     },
-    "GgqAIIAACA": {
+    "HBUAQQAAEA": {
       "t": "Y Mate",
       "g": [
         "Letters"
       ]
     },
-    "GAigIAgACAAg": {
+    "GUQAQBAAAQAE": {
       "t": "L Mate",
       "g": [
         "Letters"
       ]
     },
-    "EgqAIgCA": {
+    "FBUARAEA": {
       "t": "Closed Scissors Mate",
       "g": [
         "Scissors"
       ]
     },
-    "EAigICiA": {
+    "EBFAQFEA": {
       "t": "Open Scissors Mate",
       "g": [
         "Scissors"
       ]
     },
-    "GgqgAig": {
+    "HBVABFA": {
       "t": "Double Is Mate",
       "g": [
         "Towers"
       ]
     },
-    "GKCgICgAAIA": {
+    "GUFAQFAAAQA": {
       "t": "Twin Towers Mate",
       "g": [
         "Towers"
       ]
     },
-    "GKCgIAgAAIAg": {
+    "GUFAQBAAAQBA": {
       "t": "Skewed Towers Mate",
       "g": [
         "Towers"
       ]
     },
-    "IIAgIAgAAIAgAAAAIAg": {
+    "IQBAQBAAAQBAAAAAQBA": {
       "t": "Lightning Towers Mate",
       "g": [
         "Towers"
