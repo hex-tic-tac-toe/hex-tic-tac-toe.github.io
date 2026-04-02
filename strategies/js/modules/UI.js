@@ -1,51 +1,29 @@
 import { Layout } from '/strategies/js/modules/Layout.js';
 
 const UI = {
-  activeView: 'browser',
+  activeView: 'editor',
 
   init(onResize) {
-    window.addEventListener('resize', () => {
-      if (UI.activeView === 'editor') onResize();
-    });
+    window.addEventListener('resize', () => { if (UI.activeView === 'editor') onResize(); });
   },
 
-  showEditor(onEnter) {
-    UI.activeView = 'editor';
-    document.getElementById('view-editor').hidden  = false;
-    document.getElementById('view-browser').hidden = true;
-    document.getElementById('view-data').hidden    = true;
-    UI._setActive('tab-editor', 'tab-editor-b', 'tab-editor-d');
-    onEnter();
-  },
+  showEditor(onEnter)   { UI._show('editor',   onEnter, 'tab-editor',   'tab-editor-b',   'tab-editor-d',   'tab-editor-c'); },
+  showBrowser(onEnter)  { UI._show('browser',  onEnter, 'tab-browser',  'tab-browser-b',  'tab-browser-d',  'tab-browser-c'); },
+  showData(onEnter)     { UI._show('data',     onEnter, 'tab-data',     'tab-data-b',     'tab-data-d',     'tab-data-c'); },
+  showConvert(onEnter)  { UI._show('convert',  onEnter, 'tab-convert',  'tab-convert-b',  'tab-convert-d',  'tab-convert-c'); },
 
-  showBrowser(onEnter) {
-    UI.activeView = 'browser';
-    document.getElementById('view-browser').hidden = false;
-    document.getElementById('view-editor').hidden  = true;
-    document.getElementById('view-data').hidden    = true;
-    UI._setActive('tab-browser', 'tab-browser-b', 'tab-browser-d');
-    onEnter();
-  },
-
-  showData(onEnter) {
-    UI.activeView = 'data';
-    document.getElementById('view-data').hidden    = false;
-    document.getElementById('view-editor').hidden  = true;
-    document.getElementById('view-browser').hidden = true;
-    UI._setActive('tab-data', 'tab-data-b', 'tab-data-d');
-    onEnter();
-  },
-
-  _setActive(...activeIds) {
+  _show(view, onEnter, ...activeIds) {
+    UI.activeView = view;
+    for (const v of ['editor', 'browser', 'data', 'convert'])
+      document.getElementById('view-' + v).hidden = v !== view;
     const all = [
-      'tab-editor','tab-editor-b','tab-editor-d',
-      'tab-browser','tab-browser-b','tab-browser-d',
-      'tab-data','tab-data-b','tab-data-d',
+      'tab-editor','tab-editor-b','tab-editor-d','tab-editor-c',
+      'tab-browser','tab-browser-b','tab-browser-d','tab-browser-c',
+      'tab-data','tab-data-b','tab-data-d','tab-data-c',
+      'tab-convert','tab-convert-b','tab-convert-d','tab-convert-c',
     ];
-    for (const id of all) {
-      const el = document.getElementById(id);
-      if (el) el.classList.toggle('active', activeIds.includes(id));
-    }
+    for (const id of all) document.getElementById(id)?.classList.toggle('active', activeIds.includes(id));
+    onEnter();
   },
 };
 

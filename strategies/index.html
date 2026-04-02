@@ -15,7 +15,7 @@ permalink: /strategies/
   <div class="shared-header">
     <span class="title">HEX STRATEGY</span>
     <span class="sep">—</span>
-    <span style="color:var(--dim);font-size:10px">s</span>
+    <span class="hdr-dim" data-tip="Board size (2–32)">s</span>
     <button class="btn size-btn" id="btn-size-dec">−</button>
     <input type="number" id="input-size" value="5" min="2" max="32">
     <button class="btn size-btn" id="btn-size-inc">+</button>
@@ -28,6 +28,7 @@ permalink: /strategies/
       <button class="btn active" id="tab-editor">Editor</button>
       <button class="btn"        id="tab-browser">Browser</button>
       <button class="btn"        id="tab-data">Libraries</button>
+      <button class="btn"        id="tab-convert">Convert</button>
     </nav>
   </div>
 
@@ -36,14 +37,16 @@ permalink: /strategies/
     <button class="btn"        id="btn-mode-x">X</button>
     <button class="btn"        id="btn-mode-o">O</button>
     <button class="btn active" id="btn-mode-auto">auto</button>
-    <span class="toolbar-hint">left-drag · right-drag labels · ctrl clears</span>
+    <span class="sep" style="margin: 0 6px">—</span>
+    <span class="toolbar-label">label</span>
+    <button class="btn" id="btn-label-mode">a</button>
+    <span class="toolbar-hint">left-drag stones · right-drag labels · ctrl clears</span>
   </div>
 
-  <div id="board-area">
-    <svg id="board-svg"></svg>
-  </div>
+  <div id="board-area"><svg id="board-svg"></svg></div>
 
   <div id="note-panel">
+    <div class="panel-resize" id="note-resize"></div>
     <div id="note-area">
       <div>
         <div class="note-field-label">Title</div>
@@ -56,7 +59,48 @@ permalink: /strategies/
     </div>
   </div>
 
-  <button id="note-toggle-btn">note</button>
+  <div id="notation-panel">
+    <div class="panel-resize" id="notation-resize"></div>
+    <div class="notation-inner">
+
+      <div class="nf-section">
+        <div class="nf-hdr">
+          <span class="nf-label">BKE</span>
+          <span class="tip" data-tip="Boat-Kaitlyn-Epic — ring/offset notation, rotation-independent.">?</span>
+          <button class="btn nf-copy" id="nf-copy-bke">⎘</button>
+        </div>
+        <textarea class="nf-out" id="nf-bke" readonly></textarea>
+      </div>
+
+      <div class="nf-section">
+        <div class="nf-hdr">
+          <span class="nf-label">HTN</span>
+          <span class="tip" data-tip="Hexagonal Tic Tac Toe Notation — synthesized from board state.">?</span>
+          <button class="btn nf-copy" id="nf-copy-htn">⎘</button>
+        </div>
+        <textarea class="nf-out" id="nf-htn" readonly></textarea>
+      </div>
+
+      <div class="nf-section">
+        <div class="nf-hdr">
+          <span class="nf-label">Axial</span>
+          <span class="tip" data-tip="Axial (q,r) coordinates — standard programming format.">?</span>
+          <button class="btn nf-copy" id="nf-copy-axial">⎘</button>
+        </div>
+        <textarea class="nf-out" id="nf-axial" readonly></textarea>
+      </div>
+
+      <div class="nf-footer">
+        <span class="nf-hint">to import, use the Convert tab</span>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="panel-toggles">
+    <button id="note-toggle-btn">note</button>
+    <button id="notation-toggle-btn">notation</button>
+  </div>
 
   <div class="editor-footer">
     <span id="footer-stones">X: 0  O: 0  total: 0</span>
@@ -75,16 +119,16 @@ permalink: /strategies/
       <button class="btn"        id="tab-editor-b">Editor</button>
       <button class="btn active" id="tab-browser-b">Browser</button>
       <button class="btn"        id="tab-data-b">Libraries</button>
+      <button class="btn"        id="tab-convert-b">Convert</button>
     </nav>
   </div>
-
-  <aside class="lib-sidebar">
+  <aside class="lib-sidebar" id="lib-sidebar">
     <div class="sidebar-head">Libraries</div>
     <div id="lib-nav"></div>
+    <div class="sidebar-resize" id="sidebar-resize"></div>
   </aside>
-
-  <div class="browser-main">
-    <div class="cards-grid" id="cards-grid"></div>
+  <div class="browser-main" id="browser-main">
+    <div id="browser-doc"></div>
   </div>
 </div>
 
@@ -97,33 +141,73 @@ permalink: /strategies/
       <button class="btn"        id="tab-editor-d">Editor</button>
       <button class="btn"        id="tab-browser-d">Browser</button>
       <button class="btn active" id="tab-data-d">Libraries</button>
+      <button class="btn"        id="tab-convert-d">Convert</button>
     </nav>
   </div>
-
   <div class="data-body">
     <div class="lib-panel">
       <div class="lib-panel-head">Saved libraries</div>
       <div id="lib-mgmt-list"></div>
       <div class="lib-add-row">
-        <input type="text"  id="lib-add-name" placeholder="name">
-        <input type="text"  id="lib-add-url"  placeholder="pastebin raw url · github raw url · any JSON url">
+        <input type="text" id="lib-add-name" placeholder="name">
+        <input type="text" id="lib-add-url"  placeholder="pastebin raw · github raw · any JSON url">
         <button class="btn" id="btn-lib-add">+ add</button>
       </div>
-    </div>
-
-    <div class="htn-panel">
-      <div class="htn-toolbar">
-        <span class="htn-label">HTN · Hexagonal Tic Tac Toe Notation</span>
-        <span style="color:var(--dim);font-size:10px">turn</span>
-        <input type="number" id="htn-turn" min="1" placeholder="last" style="width:56px">
-        <button class="btn" id="btn-htn-load">load into editor</button>
-        <span class="toolbar-hint">ctrl+enter</span>
-      </div>
-      <textarea id="htn-text" placeholder="paste HTN notation here…&#10;&#10;example:&#10;name[GameName]playercross[Alice]playercircle[Bob];&#10;1. [-1,0][0,1];&#10;2. [1,-1][-1,2];"></textarea>
     </div>
   </div>
 </div>
 
+<div id="view-convert" hidden>
+  <div class="shared-header">
+    <span class="title">HEX STRATEGY</span>
+    <span class="sep">—</span>
+    <span style="color:var(--muted);font-size:10px">convert</span>
+    <nav class="tab-strip">
+      <button class="btn"        id="tab-editor-c">Editor</button>
+      <button class="btn"        id="tab-browser-c">Browser</button>
+      <button class="btn"        id="tab-data-c">Libraries</button>
+      <button class="btn active" id="tab-convert-c">Convert</button>
+    </nav>
+  </div>
+  <div class="cv-body">
+    <div class="cv-side">
+      <div class="cv-hdr">
+        <label class="cv-lbl">from</label>
+        <select id="conv-from" class="conv-select">
+          <option value="htn">HTN</option>
+          <option value="bke">BKE</option>
+          <option value="axial">Axial</option>
+        </select>
+        <button class="btn" id="btn-conv-from-editor" data-tip="Load current editor board as input">← editor</button>
+        <label class="cv-batch">
+          <input type="checkbox" id="conv-batch"> batch
+          <span class="tip" data-tip="Input is a JSON array of strings: [&quot;entry1&quot;, &quot;entry2&quot;]">?</span>
+        </label>
+      </div>
+      <textarea id="conv-input" placeholder="paste notation here…"></textarea>
+    </div>
+    <div class="cv-mid">
+      <button class="btn" id="btn-convert">→</button>
+    </div>
+    <div class="cv-side">
+      <div class="cv-hdr">
+        <label class="cv-lbl">to</label>
+        <select id="conv-to" class="conv-select">
+          <option value="bke">BKE</option>
+          <option value="axial">Axial</option>
+          <option value="htn">HTN</option>
+        </select>
+        <div style="margin-left:auto;display:flex;gap:6px">
+          <button class="btn" id="btn-conv-copy">⎘ copy</button>
+          <button class="btn" id="btn-conv-load" data-tip="Load result into Editor">↑ editor</button>
+        </div>
+      </div>
+      <textarea id="conv-output" readonly placeholder="result…"></textarea>
+    </div>
+  </div>
+</div>
+
+<div id="tooltip" hidden></div>
 <div class="toast" id="toast"></div>
 
 <script src="/strategies/js/index.js" type="module"></script>
