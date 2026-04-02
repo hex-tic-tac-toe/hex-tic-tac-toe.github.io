@@ -1,0 +1,12 @@
+{
+  "libraries": [
+    {
+      "name": "Openings",
+      "url": "https://hex-tic-tac-toe.github.io/strategies/data/openings.json"
+    },
+    {
+      "name": "Test",
+      "url": "https://hex-tic-tac-toe.github.io/strategies/data/test.json"
+    }
+  ]
+}

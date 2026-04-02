@@ -1,0 +1,131 @@
+---
+permalink: /strategies/
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HEX STRATEGY</title>
+  <link rel="stylesheet" href="/strategies/style.css">
+</head>
+<body>
+
+<div id="view-editor">
+  <div class="shared-header">
+    <span class="title">HEX STRATEGY</span>
+    <span class="sep">—</span>
+    <span style="color:var(--dim);font-size:10px">s</span>
+    <button class="btn size-btn" id="btn-size-dec">−</button>
+    <input type="number" id="input-size" value="5" min="2" max="32">
+    <button class="btn size-btn" id="btn-size-inc">+</button>
+    <button class="btn" id="btn-apply-size">↵</button>
+    <span class="sep" style="margin-left:4px">—</span>
+    <button class="btn" id="btn-undo">↩ undo</button>
+    <button class="btn" id="btn-clear">✕ clear</button>
+    <button class="btn save" id="btn-save">★ save</button>
+    <nav class="tab-strip">
+      <button class="btn active" id="tab-editor">Editor</button>
+      <button class="btn"        id="tab-browser">Browser</button>
+      <button class="btn"        id="tab-data">Libraries</button>
+    </nav>
+  </div>
+
+  <div class="editor-toolbar">
+    <span class="toolbar-label">place</span>
+    <button class="btn"        id="btn-mode-x">X</button>
+    <button class="btn"        id="btn-mode-o">O</button>
+    <button class="btn active" id="btn-mode-auto">auto</button>
+    <span class="toolbar-hint">left-drag · right-drag labels · ctrl clears</span>
+  </div>
+
+  <div id="board-area">
+    <svg id="board-svg"></svg>
+  </div>
+
+  <div id="note-panel">
+    <div id="note-area">
+      <div>
+        <div class="note-field-label">Title</div>
+        <input type="text" id="title-text" placeholder="position title…">
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;min-height:0">
+        <div class="note-field-label">Note</div>
+        <textarea id="note-text" placeholder="notes for this position…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <button id="note-toggle-btn">note</button>
+
+  <div class="editor-footer">
+    <span id="footer-stones">X: 0  O: 0  total: 0</span>
+    <span id="editor-mode" class="footer-mode">new</span>
+    <span id="footer-hash"></span>
+    <button class="btn" id="btn-copy-board">⎘ share</button>
+  </div>
+</div>
+
+<div id="view-browser" hidden>
+  <div class="shared-header">
+    <span class="title">HEX STRATEGY</span>
+    <span class="sep">—</span>
+    <span style="color:var(--muted);font-size:10px">browser</span>
+    <nav class="tab-strip">
+      <button class="btn"        id="tab-editor-b">Editor</button>
+      <button class="btn active" id="tab-browser-b">Browser</button>
+      <button class="btn"        id="tab-data-b">Libraries</button>
+    </nav>
+  </div>
+
+  <aside class="lib-sidebar">
+    <div class="sidebar-head">Libraries</div>
+    <div id="lib-nav"></div>
+  </aside>
+
+  <div class="browser-main">
+    <div class="cards-grid" id="cards-grid"></div>
+  </div>
+</div>
+
+<div id="view-data" hidden>
+  <div class="shared-header">
+    <span class="title">HEX STRATEGY</span>
+    <span class="sep">—</span>
+    <span style="color:var(--muted);font-size:10px">libraries</span>
+    <nav class="tab-strip">
+      <button class="btn"        id="tab-editor-d">Editor</button>
+      <button class="btn"        id="tab-browser-d">Browser</button>
+      <button class="btn active" id="tab-data-d">Libraries</button>
+    </nav>
+  </div>
+
+  <div class="data-body">
+    <div class="lib-panel">
+      <div class="lib-panel-head">Saved libraries</div>
+      <div id="lib-mgmt-list"></div>
+      <div class="lib-add-row">
+        <input type="text"  id="lib-add-name" placeholder="name">
+        <input type="text"  id="lib-add-url"  placeholder="pastebin raw url · github raw url · any JSON url">
+        <button class="btn" id="btn-lib-add">+ add</button>
+      </div>
+    </div>
+
+    <div class="htn-panel">
+      <div class="htn-toolbar">
+        <span class="htn-label">HTN · Hexagonal Tic Tac Toe Notation</span>
+        <span style="color:var(--dim);font-size:10px">turn</span>
+        <input type="number" id="htn-turn" min="1" placeholder="last" style="width:56px">
+        <button class="btn" id="btn-htn-load">load into editor</button>
+        <span class="toolbar-hint">ctrl+enter</span>
+      </div>
+      <textarea id="htn-text" placeholder="paste HTN notation here…&#10;&#10;example:&#10;name[GameName]playercross[Alice]playercircle[Bob];&#10;1. [-1,0][0,1];&#10;2. [1,-1][-1,2];"></textarea>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/strategies/js/index.js" type="module"></script>
+</body>
+</html>

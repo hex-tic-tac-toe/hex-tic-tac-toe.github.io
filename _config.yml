@@ -1,0 +1,8 @@
+remote_theme: jekyll/minima
+timezone: "UTC"
+plugins:
+  - jekyll-remote-theme
+  - jekyll-feed
+minima:
+  skin: dark
+  date_format: "%Y-%m-%d %H:%M:%S"

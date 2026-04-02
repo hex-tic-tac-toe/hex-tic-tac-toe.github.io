@@ -1,0 +1,52 @@
+{
+  "positions": {
+    "CgFA": {
+      "t": "Pair Opening",
+      "n": "A0 A1 \n\nThis is a very basic opening, considered to be somewhat weak. It provides O with one immediate preemptive, but X can easily block.",
+      "l": [
+        [
+          0,
+          0,
+          "a"
+        ],
+        [
+          1,
+          -1,
+          "b"
+        ],
+        [
+          1,
+          0,
+          "c"
+        ]
+      ],
+      "g": [
+        "Opening"
+      ]
+    },
+    "EgEAAAQ": {
+      "t": "Marge Opening",
+      "n": "A0 B0\n\nA somewhat weak opening, building a closed two, allowing X to build pre-emp by an open three (x A1 A4, x A1 B2 or x A2 B4) or a triangle (x A2 A3 or x A1 A2).",
+      "l": [
+        [
+          0,
+          0,
+          "a"
+        ],
+        [
+          1,
+          -1,
+          "b"
+        ],
+        [
+          2,
+          -2,
+          "c"
+        ]
+      ],
+      "g": [
+        "Opening"
+      ]
+    }
+  }
+}

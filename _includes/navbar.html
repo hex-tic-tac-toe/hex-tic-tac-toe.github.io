@@ -1,0 +1,36 @@
+<nav class="nav-soft">
+  <a href="{{ '/' | relative_url }}">Home</a>
+  <a href="{{ '/posts/' | relative_url }}">Posts</a>
+</nav>
+
+<style>
+.nav-soft {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  margin: 18px 0 10px 0;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+}
+
+.nav-soft a {
+  text-decoration: none;
+  color: #a8a8a8;
+  padding: 4px 2px;
+  border-bottom: 1px solid transparent;
+  transition:
+    color 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.nav-soft a:hover {
+  color: #ffffff;
+  border-color: #ffffff55;
+  transform: translateY(-1px);
+}
+
+.nav-soft a:active {
+  transform: translateY(0);
+}
+</style>
