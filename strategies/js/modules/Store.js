@@ -99,6 +99,8 @@ const Store = {
 
   resetDoc(id) { if (!this.isLocal(id)) return; this.docs[id] = { version: 1, doc: [] }; this._saveDocs(); },
 
+  clearAll() { ['hexstrat-libs','hexstrat-docs','hexstrat-local','hexstrat-order'].forEach(k => localStorage.removeItem(k)); location.reload(); },
+
   _saveLibs() { localStorage.setItem(this._K.libs, JSON.stringify(this.libs)); },
   _saveDocs()  { localStorage.setItem(this._K.docs, JSON.stringify(this.docs)); },
 };

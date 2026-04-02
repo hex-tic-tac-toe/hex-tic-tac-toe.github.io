@@ -218,3 +218,6 @@ input:focus, textarea:focus { outline:none; border-color:var(--accent-dim); }
 
 #tooltip { position:fixed; z-index:1000; background:var(--surface); border:1px solid var(--border-hi); color:var(--text); font-family:var(--font); font-size:10px; letter-spacing:.02em; padding:4px 9px; pointer-events:none; max-width:220px; line-height:1.4; }
 .hdr-dim { color:var(--dim); font-size:10px; }
+.lib-mgmt-footer { padding:8px 16px; border-top:1px solid var(--border); flex-shrink:0; }
+.lib-mgmt-footer .btn { color:var(--dim); border-color:transparent; font-size:9px; }
+.lib-mgmt-footer .btn:hover { color:var(--text); border-color:var(--border); }

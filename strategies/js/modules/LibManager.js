@@ -10,6 +10,7 @@ const LibManager = {
   render() {
     const list = document.getElementById('lib-mgmt-list');
     list.innerHTML = '';
+    LibManager.renderFooter();
     const entries = [[Store.LOCAL, Store.libs[Store.LOCAL]], ...Object.entries(Store.libs).filter(([id]) => id !== Store.LOCAL)];
     for (const [id, lib] of entries) {
       if (!lib) continue;
@@ -71,6 +72,16 @@ const LibManager = {
     }
     row.appendChild(act);
     return row;
+  },
+
+  renderFooter() {
+    const foot = document.getElementById('lib-mgmt-footer');
+    if (!foot) return;
+    foot.innerHTML = '';
+    LibManager._addBtn(foot, '✕ clear all browser data', () => {
+      if (!confirm('Delete all data stored by this page (libraries, positions, settings) and reload?')) return;
+      Store.clearAll();
+    });
   },
 
   _countPos(nodes) {
