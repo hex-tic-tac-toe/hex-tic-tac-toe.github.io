@@ -8,11 +8,19 @@ const Markdown = {
       .replace(/`(.+?)`/g,       '<code>$1</code>');
 
     const renderList = block => {
-      const lines = block.split('\n').filter(l => /^[ \t]*[-*] /.test(l));
-      let html = '<ul>', inSub = false;
-      for (const line of lines) {
-        const nested = /^[ \t]{2,}[-*] /.test(line);
-        const text   = inline(line.replace(/^[ \t]*[-*] /, ''));
+      const lines = block.split('\n');
+      let html = '', inSub = false, i = 0;
+      const preLines = [];
+      while (i < lines.length && !/^[ \t]*[-*] /.test(lines[i])) {
+        if (lines[i].trim()) preLines.push(lines[i]);
+        i++;
+      }
+      if (preLines.length) html += `<p>${inline(preLines.join('\n')).replace(/\n/g, '<br>')}</p>`;
+      html += '<ul>';
+      for (; i < lines.length; i++) {
+        if (!/^[ \t]*[-*] /.test(lines[i])) continue;
+        const nested = /^[ \t]{2,}[-*] /.test(lines[i]);
+        const text   = inline(lines[i].replace(/^[ \t]*[-*] /, ''));
         if (nested && !inSub) { html += '<ul>'; inSub = true; }
         if (!nested && inSub) { html += '</ul>'; inSub = false; }
         html += `<li>${text}</li>`;
