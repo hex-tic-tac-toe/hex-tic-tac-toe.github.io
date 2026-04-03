@@ -351,7 +351,6 @@ const App = {
     const active = main.classList.toggle('browser-compact');
     localStorage.setItem('hexstrat-compact', active ? '1' : '');
     document.getElementById('btn-compact').classList.toggle('active', active);
-    Browser.setAllCollapsed(active);
   },
 
   _loadHtn() {
