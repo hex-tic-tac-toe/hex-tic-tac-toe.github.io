@@ -296,11 +296,17 @@ html.light #board-area { background: var(--bg); }
 .doc-sec-hdr:hover .sec-link-btn { opacity:1; }
 .sec-link-btn:hover { color:var(--text); }
 
-.browser-compact .doc-sec-body:not([hidden]) { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:12px; align-items:start; }
+.browser-compact .doc-sec-body:not([hidden]),
+.browser-compact #browser-doc { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:12px; align-items:start; padding:20px 28px; }
+.browser-compact #browser-doc { padding:20px 28px; }
+.browser-compact .doc-sec-body:not([hidden]) { padding:8px 12px; }
 .browser-compact .doc-sec-body > .doc-s,
 .browser-compact .doc-sec-body > .doc-t,
-.browser-compact .doc-sec-body > .doc-add-bar { grid-column:1 / -1; }
-.browser-compact .doc-p { flex-direction:column; }
+.browser-compact .doc-sec-body > .doc-add-bar,
+.browser-compact #browser-doc > .doc-s,
+.browser-compact #browser-doc > .doc-t,
+.browser-compact #browser-doc > .doc-add-bar { grid-column:1 / -1; }
+.browser-compact .doc-p { flex-direction:column; width:100%; }
 .browser-compact .doc-p .card-board { width:100%; height:140px; }
 .browser-compact .doc-p .card-note { display:none; }
 .browser-compact .doc-p .drag-handle { display:none; }
