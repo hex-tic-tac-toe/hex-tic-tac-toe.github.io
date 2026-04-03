@@ -101,7 +101,7 @@ input:focus, textarea:focus { outline:none; border-color:var(--accent-dim); }
 .doc-t { position:relative; padding-left:18px; }
 .doc-t .drag-handle { position:absolute; left:0; top:8px; opacity:0; transition:opacity .15s; }
 .doc-t:hover .drag-handle { opacity:1; }
-.md-body { padding:10px 16px 10px 0; color:var(--text); font-size:15px; line-height:1.85; cursor:text; min-height:32px; font-family:var(--prose-font); letter-spacing:.01em; }
+.md-body { padding:10px 16px 10px 0; color:var(--text); font-size:17px; line-height:1.9; cursor:text; min-height:32px; font-family:var(--prose-font); letter-spacing:.01em; }
 .md-body:hover { background:rgba(255,255,255,.01); }
 .md-placeholder { color:var(--dim); font-style:italic; }
 .md-body h1 { font-size:20px; color:var(--text); margin-bottom:10px; letter-spacing:.01em; font-weight:700; }
@@ -124,12 +124,12 @@ input:focus, textarea:focus { outline:none; border-color:var(--accent-dim); }
 .doc-p .drag-handle { display:flex; align-items:center; padding:0 6px; opacity:0; transition:opacity .15s; cursor:grab; flex-shrink:0; }
 .doc-p:hover .drag-handle { opacity:1; }
 .doc-p:hover { border-color:var(--border-hi); }
-.doc-p .card-board { width:180px; height:150px; flex-shrink:0; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#060606; }
+.doc-p .card-board { width:220px; height:180px; flex-shrink:0; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#060606; }
 .doc-p .card-board svg { display:block; }
-.doc-p .card-meta  { padding:10px 12px; display:flex; flex-direction:column; gap:3px; flex:1; }
-.doc-p .card-title { font-size:12px; color:var(--text); font-weight:bold; }
-.doc-p .card-note  { font-size:11px; color:var(--muted); line-height:1.4; }
-.doc-p .card-stats { font-size:9px; color:var(--dim); letter-spacing:.06em; margin-top:auto; }
+.doc-p .card-meta  { padding:14px 16px; display:flex; flex-direction:column; gap:5px; flex:1; font-family:var(--prose-font); }
+.doc-p .card-title { font-size:15px; color:var(--text); font-weight:bold; letter-spacing:.01em; }
+.doc-p .card-note  { font-size:13px; color:var(--muted); line-height:1.6; }
+.doc-p .card-stats { font-size:10px; color:var(--dim); letter-spacing:.06em; margin-top:auto; font-family:var(--font); }
 .doc-p .card-actions { display:flex; margin-top:4px; }
 .doc-p .card-actions .btn { font-size:9px; padding:2px 7px; opacity:0; }
 .doc-p:hover .card-actions .btn { opacity:1; }

@@ -183,7 +183,7 @@ const Browser = {
     const board = document.createElement('div'); board.className = 'card-board';
     const svg   = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); board.appendChild(svg);
     const labels = (node.labels || []).map(l => Array.isArray(l) ? { q:l[0], r:l[1], mark:l[2] } : { ...l, mark: l.mark??l.letter??'a' });
-    BoardRenderer.build(svg, grid, labels, { w:180, h:140, margin:8, mini:true, hover:false });
+    BoardRenderer.build(svg, grid, labels, { w:220, h:180, margin:8, mini:true, hover:false });
 
     const meta = document.createElement('div'); meta.className = 'card-meta';
     if (node.title) { const t = Browser._el('div','card-title',node.title); meta.appendChild(t); }
