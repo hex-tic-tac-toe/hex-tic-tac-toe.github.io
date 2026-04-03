@@ -54,6 +54,7 @@ const Browser = {
   _renderDoc() {
     const main = document.getElementById('browser-doc');
     main.innerHTML = '';
+    main.classList.toggle('browser-editable', Browser._editable);
     if (!Browser.activeLibId || !Browser._doc.length) {
       const msg = document.createElement('div');
       msg.className = 'browser-empty';
@@ -131,7 +132,7 @@ const Browser = {
   _buildText(el, node) {
     if (Browser._editable) { const h = Browser._el('span','drag-handle','⠿'); el.appendChild(h); }
 
-    let monoActive = false;
+    let monoActive = !!node.mono;
 
     const view = document.createElement('div'); view.className = 'md-body';
     view.innerHTML = Markdown.render(node.md || '') || '<span class="md-placeholder">Click to edit…</span>';
@@ -139,13 +140,18 @@ const Browser = {
     const raw = document.createElement('pre'); raw.className = 'md-raw'; raw.hidden = true;
     raw.textContent = node.md || '';
 
+    if (monoActive) { view.hidden = true; raw.hidden = false; }
+
     const monoBtn = document.createElement('button'); monoBtn.className = 'mono-toggle'; monoBtn.textContent = '{ }'; monoBtn.title = 'Toggle monospace view';
+    monoBtn.classList.toggle('active', monoActive);
     monoBtn.addEventListener('click', e => {
       e.stopPropagation();
       monoActive = !monoActive;
+      node.mono = monoActive;
       monoBtn.classList.toggle('active', monoActive);
       view.hidden = monoActive; raw.hidden = !monoActive;
       raw.textContent = node.md || '';
+      Browser._save();
     });
 
     el.appendChild(monoBtn); el.appendChild(view); el.appendChild(raw);

@@ -75,15 +75,17 @@ input:focus, textarea:focus { outline:none; border-color:var(--accent-dim); }
 .lib-nav-sec:hover { color:var(--muted); }
 
 .browser-main { position:absolute; top:var(--header-h); left:var(--lib-side-w); right:0; bottom:0; overflow-y:auto; }
-#browser-doc  { padding:24px 32px; max-width:760px; }
+#browser-doc  { padding:32px 48px; max-width:720px; margin:0 auto; }
 .browser-empty { color:var(--dim); font-size:11px; padding:24px 0; }
 
 .doc-node { position:relative; margin-bottom:4px; }
 .doc-node.dragging { opacity:.3; }
 .doc-node.drag-over { outline:1px solid var(--accent); }
 
-.doc-s { border:1px solid var(--border); margin-bottom:12px; }
-.doc-sec-hdr { display:flex; align-items:center; gap:8px; padding:8px 12px; background:rgba(255,255,255,.02); border-bottom:1px solid var(--border); cursor:pointer; }
+.doc-s { border:1px solid transparent; margin-bottom:12px; transition:border-color .15s; }
+.browser-editable .doc-s:hover { border-color:var(--border); }
+.doc-sec-hdr { display:flex; align-items:center; gap:8px; padding:8px 12px; background:transparent; border-bottom:1px solid transparent; cursor:pointer; transition:background .15s, border-color .15s; }
+.browser-editable .doc-s:hover .doc-sec-hdr { background:rgba(255,255,255,.02); border-bottom-color:var(--border); }
 .doc-sec-hdr .collapse-btn { cursor:pointer; color:var(--muted); font-size:12px; flex-shrink:0; }
 .doc-sec-hdr .collapse-btn:hover { color:var(--text); }
 .sec-title { font-size:13px; color:var(--text); font-weight:bold; letter-spacing:.06em; flex:1; outline:none; }
@@ -99,7 +101,7 @@ input:focus, textarea:focus { outline:none; border-color:var(--accent-dim); }
 .doc-t { position:relative; padding-left:18px; }
 .doc-t .drag-handle { position:absolute; left:0; top:8px; opacity:0; transition:opacity .15s; }
 .doc-t:hover .drag-handle { opacity:1; }
-.md-body { padding:10px 16px 10px 0; color:var(--text); font-size:14px; line-height:1.75; cursor:text; min-height:32px; font-family:var(--prose-font); letter-spacing:.01em; }
+.md-body { padding:10px 16px 10px 0; color:var(--text); font-size:15px; line-height:1.85; cursor:text; min-height:32px; font-family:var(--prose-font); letter-spacing:.01em; }
 .md-body:hover { background:rgba(255,255,255,.01); }
 .md-placeholder { color:var(--dim); font-style:italic; }
 .md-body h1 { font-size:20px; color:var(--text); margin-bottom:10px; letter-spacing:.01em; font-weight:700; }
@@ -116,7 +118,9 @@ input:focus, textarea:focus { outline:none; border-color:var(--accent-dim); }
 .node-del-btn   { position:absolute; top:4px; right:0; opacity:0; padding:2px 7px; font-size:9px; }
 .doc-t:hover .node-del-btn { opacity:1; }
 
-.doc-p { display:flex; gap:0; border:1px solid var(--border); transition:border-color .1s; cursor:pointer; }
+.doc-p { display:flex; gap:0; border:1px solid transparent; transition:border-color .1s; cursor:pointer; }
+.browser-editable .doc-p { border-color:var(--border); }
+.doc-p:hover { border-color:var(--border-hi) !important; }
 .doc-p .drag-handle { display:flex; align-items:center; padding:0 6px; opacity:0; transition:opacity .15s; cursor:grab; flex-shrink:0; }
 .doc-p:hover .drag-handle { opacity:1; }
 .doc-p:hover { border-color:var(--border-hi); }
