@@ -4,13 +4,14 @@
     {
       "type": "t",
       "id": "ejm7orw",
-      "md": "All of the Text was copied from [here](https://docs.google.com/document/d/1GMXTh_Z4lMtaxvTwOIjMCyZmQJ8vUhnOBTBRNYGc-Uk/)\n\nIf you want to help gathering information or create a document thats included by default, open a local workspace of the document in the libraries tab. After editing, export the JSON data and [create a PR](https://github.com/hex-tic-tac-toe/hex-tic-tac-toe.github.io/blob/main/strategies/data/hexopedia.json)"
+      "md": "All of the Text was copied from [here](https://docs.google.com/document/d/1GMXTh_Z4lMtaxvTwOIjMCyZmQJ8vUhnOBTBRNYGc-Uk/)\n\nIf you want to help gathering information or create a document thats included by default, open a local workspace of the document in the libraries tab. After editing, export the JSON data and [create a PR](https://github.com/hex-tic-tac-toe/hex-tic-tac-toe.github.io/blob/main/strategies/data/hexopedia.json)",
+      "mono": false
     },
     {
       "type": "s",
       "id": "t3cvynk",
       "title": "Foreword",
-      "collapsed": true,
+      "collapsed": false,
       "children": [
         {
           "type": "t",
@@ -23,7 +24,7 @@
       "type": "s",
       "id": "hdgb90y",
       "title": "Glossary",
-      "collapsed": true,
+      "collapsed": false,
       "children": [
         {
           "type": "t",
@@ -36,7 +37,7 @@
       "type": "s",
       "id": "3yu36l2",
       "title": "1 Rules and the Board",
-      "collapsed": true,
+      "collapsed": false,
       "children": [
         {
           "type": "s",
@@ -199,7 +200,7 @@
               "type": "s",
               "id": "kpmuoi5",
               "title": "Closed 3",
-              "collapsed": true,
+              "collapsed": false,
               "children": [
                 {
                   "type": "t",
@@ -221,7 +222,7 @@
               "type": "s",
               "id": "oz3fx6m",
               "title": "Isolated Open 2",
-              "collapsed": true,
+              "collapsed": false,
               "children": [
                 {
                   "type": "t",
@@ -243,7 +244,7 @@
               "type": "s",
               "id": "uwwfw8l",
               "title": "Isolated Open 3",
-              "collapsed": true,
+              "collapsed": false,
               "children": [
                 {
                   "type": "t",
