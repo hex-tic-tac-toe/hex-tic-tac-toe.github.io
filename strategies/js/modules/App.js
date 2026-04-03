@@ -13,29 +13,49 @@ import { Layout }     from '/strategies/js/modules/Layout.js';
 const App = {
   async init() {
     Store.load();
+    App._initTheme();
     Browser.init(node => { Editor.loadNode(node || null); UI.showEditor(() => Editor._buildBoard()); });
     LibManager.init(App._toast);
 
-    const decoded = URLCodec.decodeFull(window.location.hash.slice(1));
-    if (decoded) {
-      Editor.grid   = decoded.grid;
-      Editor.labels = decoded.labels.map(l => ({ ...l, mark: l.mark ?? l.letter ?? 'a' }));
-      document.getElementById('input-size').value = decoded.grid.s;
-    } else {
-      Editor.loadNode(null);
-    }
+    const hash = window.location.hash.slice(1);
+    const boardNav = !hash.startsWith('b/') && hash !== 'd' && hash !== 'c' && hash;
+    if (boardNav) {
+      const decoded = URLCodec.decodeFull(boardNav);
+      if (decoded) {
+        Editor.grid   = decoded.grid;
+        Editor.labels = decoded.labels.map(l => ({ ...l, mark: l.mark ?? l.letter ?? 'a' }));
+        document.getElementById('input-size').value = decoded.grid.s;
+      } else { Editor.loadNode(null); }
+    } else { Editor.loadNode(null); }
+
     Editor.bindPointer();
     Editor.onBoardSync = App._updateNotationPanel;
     App._bindEvents();
     App._bindResizeHandles();
     App._initTooltips();
+    App._initCompact();
     UI.init(() => Editor._buildBoard());
-    UI.showEditor(() => Editor._buildBoard());
 
     await Store.fetchDefaults();
     await Store.fetchAllActive();
     Browser._renderNav();
-    if (UI.activeView === 'browser') Browser.render(Browser.activeLibId || Store.LOCAL);
+
+    if (hash.startsWith('b/')) {
+      const parts = hash.slice(2).split('/');
+      const libId = parts[0] || Store.LOCAL;
+      const secId = parts[1] || null;
+      const validLib = Store.libs[libId] || Store.libs[Store.LOCAL];
+      UI.showBrowser(() => {
+        Browser.render(validLib ? libId : Store.LOCAL, true);
+        if (secId) setTimeout(() => Browser.scrollToSection(secId), 150);
+      });
+    } else if (hash === 'd') {
+      UI.showData(() => LibManager.render());
+    } else if (hash === 'c') {
+      UI.showConvert(() => {});
+    } else {
+      UI.showEditor(() => Editor._buildBoard());
+    }
   },
 
   _updateNotationPanel(grid) {
@@ -47,14 +67,10 @@ const App = {
 
   _importSingle(grid) {
     if (!grid) { App._toast('parse error'); return; }
-    Editor.grid    = grid;
-    Editor.labels  = [];
-    Editor.history = [];
-    Editor.nodeId  = null;
+    Editor.grid    = grid; Editor.labels  = []; Editor.history = []; Editor.nodeId  = null;
     document.getElementById('input-size').value = grid.s;
     Editor._buildBoard(); Editor._syncFooter(); Editor._syncMode();
-    UI.showEditor(() => {});
-    App._toast('loaded');
+    UI.showEditor(() => {}); App._toast('loaded');
   },
 
   _importMulti(entries, fmt) {
@@ -81,29 +97,21 @@ const App = {
     const tree   = docObj?.doc || [];
     const board  = URLCodec.encode(Editor.grid);
     const labels = Editor.labels.map(l => [l.q, l.r, l.mark]);
-
     if (Editor.nodeId) {
       const found = Doc.find(tree, Editor.nodeId);
       if (found) {
         Object.assign(found[0], { board, title: Editor.title, note: Editor.note, labels, htn: found[0].htn || '' });
-        Store.saveDoc(libId, tree);
-        Editor._syncMode();
+        Store.saveDoc(libId, tree); Editor._syncMode(); Editor._setDirty(false);
         if (UI.activeView === 'browser') Browser.render(libId);
-        App._toast('updated');
-        return;
+        App._toast('updated'); return;
       }
     }
     const node    = Doc.pos(board, Editor.title, Editor.note, labels);
     Editor.nodeId = node.id;
     if (Browser.insertContext) {
-      const { list, idx } = Browser.insertContext;
-      list.splice(idx, 0, node);
-      Browser.insertContext = null;
-    } else {
-      tree.push(node);
-    }
-    Store.saveDoc(libId, tree);
-    Editor._syncMode();
+      const { list, idx } = Browser.insertContext; list.splice(idx, 0, node); Browser.insertContext = null;
+    } else { tree.push(node); }
+    Store.saveDoc(libId, tree); Editor._syncMode(); Editor._setDirty(false);
     if (UI.activeView === 'browser') Browser.render(libId);
     App._toast('saved');
   },
@@ -117,11 +125,14 @@ const App = {
     };
     document.getElementById('btn-apply-size').addEventListener('click', applySize);
     si.addEventListener('keydown', e => { if (e.key === 'Enter') applySize(); });
-    document.getElementById('btn-size-dec').addEventListener('click', () => { si.value = Math.max(2,  parseInt(si.value,10)-1); applySize(); });
+    document.getElementById('btn-size-dec').addEventListener('click', () => { si.value = Math.max(2, parseInt(si.value,10)-1); applySize(); });
     document.getElementById('btn-size-inc').addEventListener('click', () => { si.value = Math.min(32, parseInt(si.value,10)+1); applySize(); });
 
     document.getElementById('btn-undo').addEventListener('click',  () => Editor.undo());
-    document.getElementById('btn-clear').addEventListener('click', () => Editor.clear());
+    document.getElementById('btn-clear').addEventListener('click', () => {
+      if (!confirm('Clear the board?')) return;
+      Editor.clear();
+    });
     document.getElementById('btn-save').addEventListener('click',  () => App._save());
 
     document.getElementById('btn-copy-board').addEventListener('click', () => {
@@ -132,8 +143,8 @@ const App = {
     document.getElementById('note-toggle-btn').addEventListener('click', () => {
       Editor.noteOpen = !Editor.noteOpen; Editor._syncPanels(); Editor._buildBoard();
     });
-    document.getElementById('note-text').addEventListener('input',  e => { Editor.note  = e.target.value; });
-    document.getElementById('title-text').addEventListener('input', e => { Editor.title = e.target.value; });
+    document.getElementById('note-text').addEventListener('input',  e => { Editor.note  = e.target.value; Editor._setDirty(true); });
+    document.getElementById('title-text').addEventListener('input', e => { Editor.title = e.target.value; Editor._setDirty(true); });
 
     document.getElementById('notation-toggle-btn').addEventListener('click', () => {
       Editor.notationOpen = !Editor.notationOpen; Editor._syncPanels(); Editor._buildBoard();
@@ -174,9 +185,7 @@ const App = {
       const id = Store.addLibrary(name, url);
       document.getElementById('lib-add-name').value = document.getElementById('lib-add-url').value = '';
       App._toast('loading…');
-      await Store.fetchLibrary(id);
-      LibManager.render();
-      App._toast('library added');
+      await Store.fetchLibrary(id); LibManager.render(); App._toast('library added');
     });
     document.getElementById('lib-add-url').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('btn-lib-add').click(); });
 
@@ -189,42 +198,60 @@ const App = {
       const results = Notation.convertBatch(entries, fromFmt, toFmt);
       document.getElementById('conv-output').value = batch ? JSON.stringify(results, null, 2) : (results[0] || '(parse error)');
     });
-    document.getElementById('btn-conv-copy').addEventListener('click', () =>
-      App._copy(document.getElementById('conv-output').value));
-    document.getElementById('btn-conv-load').addEventListener('click', () => {
-      const fmt  = document.getElementById('conv-to').value;
-      const text = document.getElementById('conv-output').value.trim();
-      App._importSingle(Notation.gridFromFmt(text, fmt));
+    document.getElementById('btn-conv-copy').addEventListener('click',        () => App._copy(document.getElementById('conv-output').value));
+    document.getElementById('btn-conv-load').addEventListener('click',        () => { const fmt = document.getElementById('conv-to').value; App._importSingle(Notation.gridFromFmt(document.getElementById('conv-output').value.trim(), fmt)); });
+    document.getElementById('btn-conv-from-editor').addEventListener('click', () => { const fmt = document.getElementById('conv-from').value; document.getElementById('conv-input').value = Notation.gridToFmt(Editor.grid, fmt); });
+
+    document.getElementById('btn-search-clear')?.addEventListener('click', () => {
+      const s = document.getElementById('browser-search'); if (s) { s.value = ''; Browser._applySearch(''); s.focus(); }
     });
-    document.getElementById('btn-conv-from-editor').addEventListener('click', () => {
-      const fmt = document.getElementById('conv-from').value;
-      document.getElementById('conv-input').value = Notation.gridToFmt(Editor.grid, fmt);
+    document.getElementById('browser-search')?.addEventListener('input', e => Browser._applySearch(e.target.value));
+
+    document.getElementById('btn-collapse-all')?.addEventListener('click',  () => Browser.setAllCollapsed(true));
+    document.getElementById('btn-expand-all')?.addEventListener('click',    () => Browser.setAllCollapsed(false));
+    document.getElementById('btn-compact')?.addEventListener('click',       () => App._toggleCompact());
+    document.getElementById('btn-back-to-top')?.addEventListener('click',   () => { document.getElementById('browser-main').scrollTo({ top: 0, behavior: 'smooth' }); });
+
+    document.getElementById('btn-theme')?.addEventListener('click', () => App._cycleTheme());
+
+    document.getElementById('browser-main')?.addEventListener('scroll', e => {
+      const btn = document.getElementById('btn-back-to-top');
+      if (btn) btn.hidden = e.target.scrollTop < 300;
     });
 
     document.addEventListener('keydown', e => {
-      if ((e.ctrlKey||e.metaKey) && e.key==='z') { e.preventDefault(); Editor.undo(); }
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); App._save(); }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); Editor.undo(); }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+        e.preventDefault();
+        if (UI.activeView !== 'browser') UI.showBrowser(() => Browser.render(Browser.activeLibId || Store.LOCAL));
+        setTimeout(() => { const s = document.getElementById('browser-search'); s?.focus(); s?.select(); }, 50);
+      }
     });
 
+    document.getElementById('htn-text').addEventListener('keydown', e => { if ((e.ctrlKey||e.metaKey) && e.key==='Enter') App._loadHtn(); });
+    document.getElementById('btn-htn-load').addEventListener('click', () => App._loadHtn());
+
     window.addEventListener('hashchange', () => {
-      const d = URLCodec.decodeFull(window.location.hash.slice(1)); if (!d) return;
-      Editor.grid = d.grid; Editor.labels = d.labels; Editor.history = []; Editor.nodeId = null;
-      document.getElementById('input-size').value = d.grid.s;
-      Editor.noteOpen = d.labels.length > 0;
-      Editor._syncPanels(); Editor._buildBoard(); Editor._syncFooter(); Editor._syncMode();
+      const h = window.location.hash.slice(1);
+      if (!h || (!h.startsWith('b/') && h !== 'd' && h !== 'c')) {
+        const d = URLCodec.decodeFull(h); if (!d) return;
+        Editor.grid = d.grid; Editor.labels = d.labels; Editor.history = []; Editor.nodeId = null;
+        document.getElementById('input-size').value = d.grid.s;
+        Editor.noteOpen = d.labels.length > 0;
+        Editor._syncPanels(); Editor._buildBoard(); Editor._syncFooter(); Editor._syncMode();
+      }
     });
   },
 
   _bindResizeHandles() {
-    App._makeResizable(document.getElementById('note-resize'), e => {
-      Editor._applyPanelResize('note', window.innerWidth - e.clientX);
-    });
-    App._makeResizable(document.getElementById('notation-resize'), e => {
-      Editor._applyPanelResize('notation', window.innerWidth - (Editor.noteOpen ? Layout.NOTE_W : 0) - e.clientX);
-    });
+    App._makeResizable(document.getElementById('note-resize'), e => { Editor._applyPanelResize('note', window.innerWidth - e.clientX); });
+    App._makeResizable(document.getElementById('notation-resize'), e => { Editor._applyPanelResize('notation', window.innerWidth - (Editor.noteOpen ? Layout.NOTE_W : 0) - e.clientX); });
     App._makeResizable(document.getElementById('sidebar-resize'), e => {
       const w = Math.max(120, Math.min(360, e.clientX));
       document.getElementById('lib-sidebar').style.width  = w + 'px';
       document.getElementById('browser-main').style.left  = w + 'px';
+      document.getElementById('browser-toolbar')?.style && (document.getElementById('browser-toolbar').style.left = w + 'px');
       document.documentElement.style.setProperty('--lib-side-w', w + 'px');
     });
   },
@@ -250,6 +277,56 @@ const App = {
       el.style.top  = (e.clientY - el.offsetHeight - 8) + 'px';
     });
     document.addEventListener('mouseleave', () => { el.hidden = true; });
+  },
+
+  _initTheme() {
+    const saved = localStorage.getItem('hexstrat-theme') || 'system';
+    App._applyTheme(saved);
+  },
+
+  _cycleTheme() {
+    const current = localStorage.getItem('hexstrat-theme') || 'system';
+    const next = { dark: 'light', light: 'system', system: 'dark' }[current] || 'dark';
+    localStorage.setItem('hexstrat-theme', next);
+    App._applyTheme(next);
+  },
+
+  _applyTheme(theme) {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const useDark = theme === 'dark' || (theme === 'system' && prefersDark);
+    document.documentElement.classList.toggle('light', !useDark);
+    const icons = { dark: '☾', light: '☀', system: '◑' };
+    document.querySelectorAll('.btn-theme').forEach(b => b.textContent = icons[theme] || '◑');
+  },
+
+  _initCompact() {
+    const compact = localStorage.getItem('hexstrat-compact') === '1';
+    document.getElementById('browser-main')?.classList.toggle('browser-compact', compact);
+    document.getElementById('btn-compact')?.classList.toggle('active', compact);
+  },
+
+  _toggleCompact() {
+    const main   = document.getElementById('browser-main');
+    const active = main.classList.toggle('browser-compact');
+    localStorage.setItem('hexstrat-compact', active ? '1' : '');
+    document.getElementById('btn-compact').classList.toggle('active', active);
+  },
+
+  _loadHtn() {
+    const src  = document.getElementById('htn-text').value.trim(); if (!src) { App._toast('paste HTN first'); return; }
+    const turn = parseInt(document.getElementById('htn-turn').value, 10) || Infinity;
+    try {
+      const { metadata, turns } = HTN.parse(src);
+      const v = HTN.validate(turns); if (!v.ok) { App._toast(`invalid turn ${v.turn}: ${v.reason}`); return; }
+      const grid = HTN.buildGrid(turns, turn);
+      Editor.grid = grid; Editor.history = []; Editor.labels = []; Editor.nodeId = null;
+      Editor.note = metadata.name ? `Game: ${metadata.name}` : ''; Editor.title = metadata.name || '';
+      Editor.noteOpen = Editor.note.length > 0;
+      document.getElementById('input-size').value = grid.s;
+      Editor._syncPanels(); Editor._syncFooter(); Editor._syncMode();
+      UI.showEditor(() => Editor._buildBoard());
+      App._toast('loaded from HTN');
+    } catch (err) { App._toast('parse error: ' + err.message); }
   },
 
   _copy(text) {

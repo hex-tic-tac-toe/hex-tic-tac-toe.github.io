@@ -14,8 +14,9 @@ const Editor = {
   noteOpen:      false,
   notationOpen:  false,
   nodeId:        null,
+  dirty:         false,
   _drag:         null,
-  onBoardSync:   null, 
+  onBoardSync:   null,
 
   loadNode(node) {
     const grid = node ? URLCodec.decode(node.board) : null;
@@ -27,9 +28,15 @@ const Editor = {
     Editor.history = [];
     if (grid) document.getElementById('input-size').value = grid.s;
     Editor.noteOpen = Editor.note.trim().length > 0 || Editor.title.trim().length > 0;
+    Editor._setDirty(false);
     Editor._syncPanels();
     Editor._syncFooter();
     Editor._syncMode();
+  },
+
+  _setDirty(v) {
+    Editor.dirty = v;
+    document.getElementById('btn-save')?.classList.toggle('dirty', v);
   },
 
   undo() {
@@ -37,12 +44,14 @@ const Editor = {
     HexGrid.setState(Editor.grid, last.q, last.r, last.prev);
     BoardRenderer.updateCell(document.getElementById('board-svg'), last.q, last.r, last.prev);
     Editor._syncFooter();
+    Editor._setDirty(true);
   },
 
   clear() {
     for (const c of Editor.grid.cells.values()) c.state = 0;
     Editor.history = []; Editor.labels = []; Editor.nodeId = null;
     Editor._buildBoard(); Editor._syncFooter(); Editor._syncMode();
+    Editor._setDirty(false);
   },
 
   _buildBoard() {
@@ -60,37 +69,30 @@ const Editor = {
   _syncMode() {
     const el  = document.getElementById('editor-mode'); if (el) el.textContent = Editor.nodeId ? 'saved' : 'new';
     const btn = document.getElementById('btn-save');    if (btn) btn.textContent = Editor.nodeId ? '★ update' : '★ save';
+    Editor._setDirty(Editor.dirty);
   },
 
   _syncPanels() {
     const noteW     = Editor.noteOpen     ? Layout.NOTE_W     : 0;
     const notationW = Editor.notationOpen ? Layout.NOTATION_W : 0;
 
-    
     const notePanel = document.getElementById('note-panel');
-    notePanel.style.display = Editor.noteOpen ? 'flex' : 'none';
-    notePanel.style.width   = noteW + 'px';
-    document.getElementById('note-text').value  = Editor.note;
-    document.getElementById('title-text').value = Editor.title;
+    if (notePanel) { notePanel.style.display = Editor.noteOpen ? 'flex' : 'none'; notePanel.style.width = noteW + 'px'; }
+    const nt = document.getElementById('note-text');    if (nt) nt.value = Editor.note;
+    const tt = document.getElementById('title-text');   if (tt) tt.value = Editor.title;
 
-    
     const notationPanel = document.getElementById('notation-panel');
-    notationPanel.style.display = Editor.notationOpen ? 'flex' : 'none';
-    notationPanel.style.right   = noteW + 'px';
-    notationPanel.style.width   = notationW + 'px';
+    if (notationPanel) { notationPanel.style.display = Editor.notationOpen ? 'flex' : 'none'; notationPanel.style.right = noteW + 'px'; notationPanel.style.width = notationW + 'px'; }
 
-    
-    document.getElementById('board-area').style.right = (noteW + notationW) + 'px';
+    const ba = document.getElementById('board-area');
+    if (ba) ba.style.right = (noteW + notationW) + 'px';
 
-    
-    document.getElementById('note-toggle-btn').classList.toggle('active', Editor.noteOpen);
-    document.getElementById('notation-toggle-btn').classList.toggle('active', Editor.notationOpen);
+    document.getElementById('note-toggle-btn')?.classList.toggle('active', Editor.noteOpen);
+    document.getElementById('notation-toggle-btn')?.classList.toggle('active', Editor.notationOpen);
 
-    
     if (Editor.notationOpen) Editor.onBoardSync?.(Editor.grid);
   },
 
-  
   _applyPanelResize(which, newW) {
     const clamped = Math.max(180, Math.min(520, newW));
     if (which === 'note')     Layout.NOTE_W     = clamped;
@@ -111,6 +113,7 @@ const Editor = {
     Editor.history.push({ q, r, prev: cell.state });
     HexGrid.setState(Editor.grid, q, r, state);
     BoardRenderer.updateCell(document.getElementById('board-svg'), q, r, state);
+    Editor._setDirty(true);
   },
 
   _nextMark() {
@@ -130,6 +133,7 @@ const Editor = {
     Editor.labels = Editor.labels.filter(l => !(l.q === q && l.r === r));
     if (!clear) Editor.labels.push({ q, r, mark: Editor._nextMark() });
     Editor._buildBoard();
+    Editor._setDirty(true);
   },
 
   bindPointer() {

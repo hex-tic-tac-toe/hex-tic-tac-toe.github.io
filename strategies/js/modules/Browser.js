@@ -11,20 +11,35 @@ const Browser = {
   _editable:     false,
   _onOpen:       null,
   insertContext: null,
+  _activeSec:    null,
 
   init(onOpenPosition) { Browser._onOpen = onOpenPosition; },
 
-  render(libId) {
+  render(libId, noHashUpdate) {
     Browser.activeLibId = libId;
     const libData       = Store.getDoc(libId);
     Browser._doc        = libData?.doc || [];
     Browser._editable   = Store.isLocal(libId);
     Browser._renderNav();
     Browser._renderDoc();
+    if (!noHashUpdate) history.replaceState(null, '', '#b/' + libId);
+  },
+
+  scrollToSection(secId) {
+    const el = document.getElementById('dn-' + secId);
+    if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); history.replaceState(null, '', '#b/' + Browser.activeLibId + '/' + secId); }
+  },
+
+  setAllCollapsed(collapsed) {
+    const walk = nodes => nodes.forEach(n => { if (n.type === 's') { n.collapsed = collapsed; walk(n.children || []); } });
+    walk(Browser._doc);
+    if (Browser._editable) Browser._save();
+    Browser._renderDoc(); Browser._renderNav();
   },
 
   _renderNav() {
-    const nav = document.getElementById('lib-nav');
+    const nav   = document.getElementById('lib-nav');
+    const crumb = document.getElementById('browser-crumb');
     nav.innerHTML = '';
     const entries = [[Store.LOCAL, Store.libs[Store.LOCAL]], ...Object.entries(Store.libs).filter(([id]) => id !== Store.LOCAL)];
     for (const [id, lib] of entries) {
@@ -36,16 +51,27 @@ const Browser = {
       nav.appendChild(el);
       if (Browser.activeLibId === id) Browser._navSections(nav, Browser._doc, 1);
     }
+    if (crumb) {
+      const sec = Browser._activeSec ? Doc.find(Browser._doc, Browser._activeSec)?.[0] : null;
+      crumb.textContent = sec?.title || '';
+      crumb.hidden = !sec;
+    }
   },
 
   _navSections(nav, nodes, depth) {
     for (const n of nodes) {
       if (n.type !== 's') continue;
       const el = document.createElement('div');
-      el.className = 'lib-nav-sec';
+      el.className = 'lib-nav-sec' + (Browser._activeSec === n.id ? ' active' : '');
       el.style.paddingLeft = (8 + depth * 12) + 'px';
+      el.dataset.id = n.id;
       el.textContent = n.title;
-      el.addEventListener('click', e => { e.stopPropagation(); document.getElementById('dn-' + n.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+      el.addEventListener('click', e => {
+        e.stopPropagation();
+        Browser._activeSec = n.id;
+        Browser._renderNav();
+        Browser.scrollToSection(n.id);
+      });
       nav.appendChild(el);
       if (!n.collapsed && n.children) Browser._navSections(nav, n.children, depth + 1);
     }
@@ -64,6 +90,7 @@ const Browser = {
       return;
     }
     Browser._renderNodes(main, Browser._doc);
+    Browser._applySearch(document.getElementById('browser-search')?.value || '');
   },
 
   _renderNodes(container, nodes) {
@@ -97,14 +124,22 @@ const Browser = {
       ttl.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); ttl.blur(); } });
     }
     hdr.appendChild(btn); hdr.appendChild(ttl);
+
+    const linkBtn = document.createElement('button'); linkBtn.className = 'sec-link-btn'; linkBtn.textContent = '🔗'; linkBtn.title = 'Copy link to section';
+    linkBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      const url = location.origin + location.pathname + '#b/' + Browser.activeLibId + '/' + node.id;
+      navigator.clipboard?.writeText(url);
+      Browser._activeSec = node.id; Browser._renderNav();
+      history.replaceState(null, '', '#b/' + Browser.activeLibId + '/' + node.id);
+    });
+    hdr.appendChild(linkBtn);
+
     if (Browser._editable) {
       const act = document.createElement('div'); act.className = 'sec-actions';
       act.appendChild(Browser._btn('+section', () => { node.children.push(Doc.section()); Browser._save(); Browser._renderDoc(); Browser._renderNav(); }));
       act.appendChild(Browser._btn('+text',    () => { node.children.push(Doc.text());    Browser._save(); Browser._renderDoc(); }));
-      act.appendChild(Browser._btn('+pos',     () => {
-        Browser.insertContext = { list: node.children, idx: node.children.length };
-        Browser._onOpen?.(null);
-      }));
+      act.appendChild(Browser._btn('+pos',     () => { Browser.insertContext = { list: node.children, idx: node.children.length }; Browser._onOpen?.(null); }));
       const del = Browser._btn('✕', () => { if (!confirm('Delete section and contents?')) return; Doc.remove(Browser._doc, node.id); Browser._save(); Browser._renderDoc(); Browser._renderNav(); });
       del.style.marginLeft = 'auto';
       act.appendChild(del); hdr.appendChild(act);
@@ -123,7 +158,7 @@ const Browser = {
     };
     btn.addEventListener('click', e => { e.stopPropagation(); toggleCollapse(); });
     hdr.addEventListener('click', e => {
-      if (e.target.closest('.sec-actions') || e.target.closest('.drag-handle')) return;
+      if (e.target.closest('.sec-actions') || e.target.closest('.drag-handle') || e.target.closest('.sec-link-btn')) return;
       if (e.target === ttl && ttl.isContentEditable) return;
       toggleCollapse();
     });
@@ -131,31 +166,22 @@ const Browser = {
 
   _buildText(el, node) {
     if (Browser._editable) { const h = Browser._el('span','drag-handle','⠿'); el.appendChild(h); }
-
     let monoActive = !!node.mono;
-
     const view = document.createElement('div'); view.className = 'md-body';
     view.innerHTML = Markdown.render(node.md || '') || '<span class="md-placeholder">Click to edit…</span>';
-
     const raw = document.createElement('pre'); raw.className = 'md-raw'; raw.hidden = true;
     raw.textContent = node.md || '';
-
     if (monoActive) { view.hidden = true; raw.hidden = false; }
-
     const monoBtn = document.createElement('button'); monoBtn.className = 'mono-toggle'; monoBtn.textContent = '{ }'; monoBtn.title = 'Toggle monospace view';
     monoBtn.classList.toggle('active', monoActive);
     monoBtn.addEventListener('click', e => {
-      e.stopPropagation();
-      monoActive = !monoActive;
-      node.mono = monoActive;
+      e.stopPropagation(); monoActive = !monoActive; node.mono = monoActive;
       monoBtn.classList.toggle('active', monoActive);
       view.hidden = monoActive; raw.hidden = !monoActive;
       raw.textContent = node.md || '';
       Browser._save();
     });
-
     el.appendChild(monoBtn); el.appendChild(view); el.appendChild(raw);
-
     if (Browser._editable) {
       const ta = document.createElement('textarea'); ta.className = 'doc-text-ta'; ta.value = node.md || ''; ta.hidden = true; ta.placeholder = 'Markdown…';
       const autosize = () => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; };
@@ -180,25 +206,46 @@ const Browser = {
   _buildPos(el, node) {
     const grid = URLCodec.decode(node.board); if (!grid) return;
     if (Browser._editable) { const h = Browser._el('span','drag-handle','⠿'); el.appendChild(h); }
+    el.tabIndex = 0;
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { Browser._onOpen?.(node); return; }
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); Browser._focusNextCard(el, 1); }
+      if (e.key === 'ArrowUp'   || e.key === 'ArrowLeft')  { e.preventDefault(); Browser._focusNextCard(el, -1); }
+    });
     const board = document.createElement('div'); board.className = 'card-board';
     const svg   = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); board.appendChild(svg);
     const labels = (node.labels || []).map(l => Array.isArray(l) ? { q:l[0], r:l[1], mark:l[2] } : { ...l, mark: l.mark??l.letter??'a' });
     BoardRenderer.build(svg, grid, labels, { w:220, h:180, margin:8, mini:true, hover:false });
-
     const meta = document.createElement('div'); meta.className = 'card-meta';
-    if (node.title) { const t = Browser._el('div','card-title',node.title); meta.appendChild(t); }
-    if (node.note)  { const n = Browser._el('div','card-note',node.note.split('\n')[0]); meta.appendChild(n); }
+    if (node.title) meta.appendChild(Browser._el('div','card-title',node.title));
+    if (node.note)  meta.appendChild(Browser._el('div','card-note',node.note.split('\n')[0]));
     const { x, o } = HexGrid.countStones(grid);
     meta.appendChild(Browser._el('div', 'card-stats', `X ${x}  O ${o}  s${grid.s}`));
-
     if (Browser._editable) {
       const act = document.createElement('div'); act.className = 'card-actions';
       act.appendChild(Browser._btn('✕ delete', () => { if (!confirm(`Delete "${node.title||node.board}"?`)) return; Doc.remove(Browser._doc,node.id); Browser._save(); Browser._renderDoc(); }));
       meta.appendChild(act);
     }
-
     el.appendChild(board); el.appendChild(meta);
     board.addEventListener('click', () => Browser._onOpen?.(node));
+  },
+
+  _focusNextCard(current, dir) {
+    const cards = [...document.querySelectorAll('.doc-p[tabindex="0"]')];
+    const idx   = cards.indexOf(current);
+    const next  = cards[idx + dir];
+    if (next) next.focus({ preventScroll: false });
+  },
+
+  _applySearch(q) {
+    const query = q.toLowerCase().trim();
+    document.querySelectorAll('#browser-doc .doc-t, #browser-doc .doc-p').forEach(el => {
+      if (!query) { el.hidden = false; return; }
+      const id   = el.id.slice(3);
+      const node = Doc.find(Browser._doc, id)?.[0];
+      const text = node ? ((node.md||'') + (node.title||'') + (node.note||'')).toLowerCase() : '';
+      el.hidden = !text.includes(query);
+    });
   },
 
   _addBar(list, insertIdx) {
