@@ -1,0 +1,400 @@
+{
+  "version": 1,
+  "doc": [
+    {
+      "type": "t",
+      "id": "ejm7orw",
+      "md": "All of the Text was copied from [here](https://docs.google.com/document/d/1GMXTh_Z4lMtaxvTwOIjMCyZmQJ8vUhnOBTBRNYGc-Uk/)\n\nIf you want to help gathering information or create a document thats included by default, open a local workspace of the document in the libraries tab. After editing, export the JSON data and [create a PR](https://github.com/hex-tic-tac-toe/hex-tic-tac-toe.github.io/blob/main/strategies/data/hexopedia.json)",
+      "mono": false
+    },
+    {
+      "type": "s",
+      "id": "t3cvynk",
+      "title": "Foreword",
+      "collapsed": false,
+      "children": [
+        {
+          "type": "t",
+          "id": "5f9b2vg",
+          "md": "The game of Hexagonal Tic-Tac-Toe (popularly known as HeXO) was created as a simple concept: what if the classic game of Tic-Tac-Toe was stretched onto an infinite hexagonal plane? Created and made popular by the creator webgoatguy in his video, \"Hexagonal tic-tac-toe is ridiculous,\" (among others) the game immediately became popular among mathematicians, programmers and game theory enthusiasts.\n\nWithin only weeks, a massive effort of the community began. Developers like WolverinDEV launched hexo.did.science to make way for live matches and Elo tracking, while developers like meaf and laxader built sandbox explorers (meaf.us and explore.htttx.io) to simulate move trees, highlight cells, and catalog different HeXO structures. \n\nThis encyclopedia aims to compile all of HeXO’s raw theory, crafted by that very community. It shows how such a simple game with such simple rules can develop into deep theory and potentially rival games which have existed for centuries.\n\nFurther credits for singular discoveries and theory are given throughout the text, along with links to different documents and videos."
+        }
+      ]
+    },
+    {
+      "type": "s",
+      "id": "hdgb90y",
+      "title": "Glossary",
+      "collapsed": false,
+      "children": [
+        {
+          "type": "t",
+          "id": "5rv2o22",
+          "md": "Before this document dives into the deep theory of HeXO, we must define some base concepts of the game. Advanced concepts aren’t defined here, and will come later in the document.\n\n- Cell / Hex / Tile / Stone / Piece: Interchangeable terms referring either to the hexagonal spaces on the grid or the markers (X and O) placed by the players.\n- Turn vs. Move (Ply): An important difference debated and standardized by users sunny_lu_89, kubuxu, and kaitlynethylia. A move (or ply) refers to the placement of a single piece. A turn refers to the complete action of a player, which, after the very first placement of the game, always consists of two moves.\n- N-in-a-row / Hex / Solo / Duo / Trio / Quad / Penta / Sexta: The win condition of the game is achieving six pieces in a continuous straight line. sunny_lu_89 proposed the term \"Sexta\" (or simply \"Hex\" or \"Six\"), alongside \"Solo, Duo, Trio, Quad, and Penta\" for lines of 1 through 5, respectively.\n- Threat: A board state in which a player threatens to achieve a 6-in-a-row on their next turn if left undefended. (e.g., an Open 4).\n- Preemptive (Pre-emp / Pre): A board state that threatens to become a full threat on the subsequent turn if the opponent does not intervene (e.g., an Open 3).\n- Open / Closed / Dead: Terms used to describe the endpoints of a line of pieces (__akra__, chaoticish, finneon7).\n  - Open: Empty space exists on both ends of the line, potentially allowing development in two directions.\n  - Closed (or Semi-Open): One end of the line is blocked by an opponent's piece, leaving only one direction for development.\n  - Dead: Both ends of the line are blocked by the opponent.\n- Colony: A piece or cluster of pieces placed far away from the main cluster of interaction (\"mainland\").\n- Singlet / Doublet / Triplet: Preemptives that require only a half-turn (one single move) to be developed into active threats (sunny_lu_89)."
+        }
+      ]
+    },
+    {
+      "type": "s",
+      "id": "3yu36l2",
+      "title": "1 Rules and the Board",
+      "collapsed": false,
+      "children": [
+        {
+          "type": "s",
+          "id": "1pt2dij",
+          "title": "1.1 The Board",
+          "collapsed": false,
+          "children": [
+            {
+              "type": "t",
+              "id": "wefypex",
+              "md": "HeXO is played on an infinite grid made of regular hexagons. Unlike a square grid where pieces can connect orthogonally (up/down, left/right) and diagonally, a hexagonal grid creates opportunities for connections along exactly three intersecting axes.\n\nInterestingly, user hotel.coffee proved that the geometry of HeXO is mathematically the same as playing a 6-in-a-row game on a standard infinite square grid, provided that players are only allowed to form connections horizontally, vertically, and along one of the two possible diagonal directions. While visually less intuitive, this square-grid equality is occasionally used by developers to optimize brute-force solving algorithms (veganwater45)."
+            }
+          ]
+        },
+        {
+          "type": "s",
+          "id": "loyzpvm",
+          "title": "1.2 Turn Parity",
+          "collapsed": false,
+          "children": [
+            {
+              "type": "t",
+              "id": "2rj10b4",
+              "md": "To reduce the giant advantage that Player 1 (traditionally X, or Red) would have by moving first on an infinite board, HeXO uses a unique placement system.\n\n1. Player 1 places exactly one piece (the origin).\n2. Player 2 (traditionally O, or Blue) places two pieces.\n3. Player 1 places two pieces.\n4. Play continues with each player placing two pieces per turn ad infinitum.\n\nBecause Player 1 begins with a \"half-turn,\" Player 2 is actually the first player to have the opportunity to create an even number of pieces on the board, taking control of the Tempo, which will be further discussed later on.\n"
+            }
+          ]
+        },
+        {
+          "type": "s",
+          "id": "e2xn0to",
+          "title": "1.3 Win Conditions",
+          "collapsed": false,
+          "children": [
+            {
+              "type": "t",
+              "id": "bcv9gbi",
+              "md": "A player wins immediately upon creating a continuous, straight line of six pieces of their color along any of the three axes.\n\nUser veganwater45 and finneon7 concluded that forming a 7-in-a-row contains a 6-in-a-row, and thus the game should officially end the moment the 6th piece is placed. \n\nUser bis__cat humorously noted that, technically, a 17-in-a-row is mathematically possible in a single turn if two overlapping 5-in-a-rows are connected by a two-piece placement, assuming an opponent played horribly enough to allow it."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "s",
+      "id": "4i8i6ff",
+      "title": "2 Notation",
+      "collapsed": false,
+      "children": [
+        {
+          "type": "t",
+          "id": "ova5xp5",
+          "md": "Because HeXO is played on an infinite board, creating a notation system to record games and analyze theory was really difficult. The community created several different frameworks to solve this."
+        },
+        {
+          "type": "s",
+          "id": "aktu664",
+          "title": "2.1 BKE Notation (Boat-Kaitlyn-Epic)",
+          "collapsed": false,
+          "children": [
+            {
+              "type": "t",
+              "id": "ck7j51h",
+              "md": "BKE Notation is the standardized system used to define Openings and Formations. Its primary advantage is that it removes dependencies on specific board orientations by relying on rotational symmetry.\n\nBKE Coordinates are determined by three factors: Ring, Offset, and optionally, Sector.\n\n- Origin: The central tile (Player 1's first move) is the origin, denoted simply as Z0 or 0.\n- Ring: How far away the tile is from the center, denoted by a capital letter moving outward (A is the first ring of 6 hexes touching the center, B is the second ring of 12 hexes, C is the third ring of 18, and so on…). If play extends past 26 rings, double letters like AA are used.\n- Offset: The distance around the ring from a designated 0-offset line.\n- 0-Offset Line: To ensure the notation works regardless of how the board is turned, a \"0-offset line\" is defined as the central axis line that the first move of Player 2 lies on (or is closest to). Chirality (whether you count offsets clockwise or counter-clockwise) is determined by whichever direction minimizes the numerical offset of Player 2's placements.\n- Sector (Optional): To decrease vagueness in larger rings, the grid is divided into six 60-degree slices. A coordinate like B2.1 means Ring B, Sector 2, Offset 1."
+            },
+            {
+              "type": "t",
+              "id": "fhn9h3k",
+              "md": "Under BKE, player turns are separated by spaces and prefixed with x or o.\n\nx A0 A2 x A1 A4 o B2 D16 \n\n(a.k.a the Longsword Opening)"
+            },
+            {
+              "type": "p",
+              "id": "zyziwtq",
+              "board": "GgAgABEwAAAABA",
+              "title": "BKE Example",
+              "note": "",
+              "labels": [],
+              "htn": ""
+            }
+          ]
+        },
+        {
+          "type": "s",
+          "id": "d9xqmqa",
+          "title": "2.2 Boat’s Rectilinear ASCII Notation",
+          "collapsed": false,
+          "children": [
+            {
+              "type": "t",
+              "id": "m1m7nyb",
+              "md": "Developed by sunny_lu_89, this notation was designed to be quickly typed into Discord  using plain text without needing a dedicated board editor.\nIt uses a shearing transformation to represent the hex grid as a staggered rectangle."
+            },
+            {
+              "type": "p",
+              "id": "2kexvyv",
+              "board": "ErAiQhBA",
+              "title": "ASCII Example",
+              "note": "",
+              "labels": [],
+              "htn": ""
+            },
+            {
+              "type": "t",
+              "id": "czfz4h4",
+              "md": "Example of a formation in Rectilinear ASCII:\n\n. . x\n . o o\n  . x x x o\n   x x . o .\n\nx = Player 1\no = Player 2\n. = Empty Space\n/ = New Line (shifted to the right)",
+              "mono": true
+            }
+          ]
+        },
+        {
+          "type": "s",
+          "id": "onjc84v",
+          "title": "2.3 RHD (Relative Hex Dictation)",
+          "collapsed": false,
+          "children": [
+            {
+              "type": "t",
+              "id": "bjjn8id",
+              "md": "Proposed by displaystring, RHD does not attempt to map the entire board. Instead, it focuses on the state of hexes relative to a specific point (usually the center of a formation). It was built to identify immediate threat states without needing to calculate any rings. \n\nA similar system, HDR (Horizon Diagonal Ranging), was proposed by marcopoloian to count diagonal steps toward a center \"horizon\" line, though it was largely replaced by BKE."
+            }
+          ]
+        },
+        {
+          "type": "s",
+          "id": "gzfh0d2",
+          "title": "2.4 Cube and Axial Coordinates",
+          "collapsed": false,
+          "children": [
+            {
+              "type": "t",
+              "id": "1a9irck",
+              "md": "For programming bots and brute-forcing algorithms, developers needed a mathematical grid. A debate occurred between bluddy_cast, laxader, bigtreebig, and moonling_ over such coordinate mapping.\nStandard 2D grids use (x, y). However, hexagonal grids possess three axes.\n- Cube Coordinates (q, r, s): Created from a semi-popular [guide](https://www.redblobgames.com/grids/hexagons/) by Red Blob Games, this system assigns three coordinates to every hex, ensuring the strict rule that q + r + s = 0 at all times.\n- Axial Coordinates (q, r): Because s can always be calculated as -q - r, the s coordinate can be dropped entirely for data storage, creating a skewed square grid. laxader used this for development on explore.htttx.io."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "s",
+      "id": "q2w73jz",
+      "title": "3 Threat Theory",
+      "collapsed": false,
+      "children": [
+        {
+          "type": "t",
+          "id": "zch0rbo",
+          "md": "To go beyond random tile placement, players must understand how to mathematically value their current board state. Threat Theory is the framework used to calculate whether a sequence of moves is inherently winning, losing, or neutral."
+        },
+        {
+          "type": "s",
+          "id": "zk7n5cr",
+          "title": "3.1 The Anatomy of a Threat",
+          "collapsed": false,
+          "children": [
+            {
+              "type": "t",
+              "id": "idg74zz",
+              "md": "As defined in the glossary, a Threat is an immediate mate-in-one board state (e.g., an Open 4 or a Closed 5). A Preemptive (Pre) is a sequence that will become a threat next turn.\n\nHowever, not all preemptives are created equal."
+            },
+            {
+              "type": "s",
+              "id": "kpmuoi5",
+              "title": "Closed 3",
+              "collapsed": false,
+              "children": [
+                {
+                  "type": "t",
+                  "id": "af9be1o",
+                  "md": "A line of three pieces blocked on one end. To turn this into a threat, the attacker must spend a full turn (two pieces) to create a Closed 5. Because it is slow, a Closed 3 is easily defended and carries low offensive weight."
+                },
+                {
+                  "type": "p",
+                  "id": "uhtf3to",
+                  "board": "EoAgAABA",
+                  "title": "Closed 3",
+                  "note": "",
+                  "labels": [],
+                  "htn": ""
+                }
+              ]
+            },
+            {
+              "type": "s",
+              "id": "oz3fx6m",
+              "title": "Isolated Open 2",
+              "collapsed": false,
+              "children": [
+                {
+                  "type": "t",
+                  "id": "p1otp64",
+                  "md": "Two pieces in a row with empty space on both sides. A player can spend one turn placing a piece on both ends to create an Open 4 (which contains two simultaneous threats). Thus, an Isolated Open 2 is a powerful pre-emp which could lead to further threats."
+                },
+                {
+                  "type": "p",
+                  "id": "smwj839",
+                  "board": "CgAg",
+                  "title": "Isolated Open 2",
+                  "note": "",
+                  "labels": [],
+                  "htn": ""
+                }
+              ]
+            },
+            {
+              "type": "s",
+              "id": "uwwfw8l",
+              "title": "Isolated Open 3",
+              "collapsed": false,
+              "children": [
+                {
+                  "type": "t",
+                  "id": "4gde0qf",
+                  "md": "Three pieces in a row with empty space on both sides. The Isolated Open 3 is feared by the community (chaoticish, finneon7, 9hl.). If left completely undefended, the attacker only needs one piece to create an Isolated Open 4, leaving their second piece free to create a completely different attack or colony. According to theepicosity's analysis, an Isolated Open 3 requires 5 moves to completely block all potential mates, meaning that without a Tempo advantage, it is an undefendable, forced loss for the defender."
+                },
+                {
+                  "type": "p",
+                  "id": "jc1tai5",
+                  "board": "CoAg",
+                  "title": "Isolated Open 3",
+                  "note": "",
+                  "labels": [],
+                  "htn": ""
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "s",
+          "id": "x8vmqom",
+          "title": "3.2 Tenderloin345’s Threat System (W-S-C)",
+          "collapsed": false,
+          "children": [
+            {
+              "type": "t",
+              "id": "ckqk78d",
+              "md": "To mathematically determine why certain structures are more deadly than others, user tenderloin345 developed a Threat system based on three variables: Weight (W), Strength (S), and Cost (C).\n\n- Weight: The number of cells required to form the threat structure.\n- Strength: The number of unique ways the threat can win the game (e.g., an Open 4 has a Strength of 2, because it can be won by placing a piece on the left or the right).\n- Cost: The number of pieces the defender must play to completely neutralize the threat."
+            },
+            {
+              "type": "t",
+              "id": "lj3txfq",
+              "md": "Using this taxonomy:\n\n- A Blocked 4 is a 1-0-2 threat (it takes 1 piece to become a 5, has 0 strength because it is blocked, and costs the opponent 2 pieces to permanently cap both ends).\n- An Open 2 is a 2-2-2 threat.\n- An Open 3 is a 3-1-2 threat.\n- A Rhombus (a 4-piece diamond) is a 3-1-2 threat."
+            },
+            {
+              "type": "t",
+              "id": "xmj25fg",
+              "md": "This Threat System also extends to preemptives. When evaluating a pre-emp, the Weight and the Strength describe the resulting threat that will be created, while the Cost measures the number of moves needed by the attacker to activate that threat. For example, if a pre-emp requires 2 moves to activate as a threat, but that threat will ultimately have a high Weight and Strength, it allows theory enthusiasts to calculate whether they have enough time to set it up before any interference occurs.\n\n__akra__ attempted to turn these into a raw evaluation formula for bots: \n\n# Eval = (W * (3 - C))/(S+1)\n\nAlthough this formula is still experimental, this equation allows theorists to accurately determine if a board state is winning simply by adding up all the offensive strengths of all active preemptives."
+            }
+          ]
+        },
+        {
+          "type": "s",
+          "id": "04l6l7n",
+          "title": "3.3 Tempo",
+          "collapsed": false,
+          "children": [
+            {
+              "type": "t",
+              "id": "i36l12a",
+              "md": "In HeXO, Tempo (or Momentum) is the most important currency. Because players place two pieces per turn, creating a tempo means forcing your opponent to spend their entire turn reacting to your threats, leaving them no pieces to build their own."
+            },
+            {
+              "type": "t",
+              "id": "c9fotft",
+              "md": "User ndmath expanded on this by defining specific maneuvers:\n\n- Pacer: A defensive move that blocks an opponent's threat and advances one of your own Closed 3s or Open 2s at the same time. By chaining Pacers, a defender decides the \"pace\" of the attack, forcing the attacker to abandon their primary plan to take care of the newly created threat.\n- Delay: A move (often involving an Open 2) where a player threatens an expansion that isn't immediately deadly, forcing the opponent to either ignore it (granting the player two Pacers on the next turn) or spend a piece capping it. This \"delays\" the opponent's primary offensive plan."
+            },
+            {
+              "type": "t",
+              "id": "872ml7p",
+              "md": "Continuing on Tenderloin345’s Threat System, uncreative172 created Tempo Notation. This system categorizes preemptive by the Tempo advantage they create. This is calculated by taking the moves it costs the opponent to defend the resulting threat, minus the moves it costs the attacker to create it. This creates three unique classifications:\n\n- +1 Tempo: A pre-emp that costs one more move to defend as a threat than it does to turn it into one (e.g. an Open 3). A +1 pre-emp usually leads to a forced win when left completely undefended because the attacker generates free Tempo.\n- +0 Tempo: A pre-emp that costs the same amount of moves to defend as it does to activate (e.g., an Open 2 or a Closed 3). Formations such as the Triangle and Open-3 use +0s to maintain tempo in order to build up to an undefendable threat.\n- -1 Tempo: A pre-emp that costs one more move to activate into a threat than it does to defend (e.g., a Closed 2). These are generally only used when making them fulfills some secondary purpose instead of just creating a threat, like defending an opponent’s attack simultaneously."
+            }
+          ]
+        },
+        {
+          "type": "s",
+          "id": "qwzqjcu",
+          "title": "3.4 Location-Sensitive vs. Location-Insensitive Formations",
+          "collapsed": false,
+          "children": [
+            {
+              "type": "t",
+              "id": "wvmv761",
+              "md": "A debate occurred between tech.netium, crreator, and laxader about how threats physically behave on the infinite grid. Originally named \"Case Sensitive\" vs. \"Off and On\" by crreator, the community has since standardized the terms to Location-Sensitive and Location-Insensitive.\n\n- Location-Sensitive: A formation where the individual threats must be addressed in the exact same local vicinity to function. A Rhombus is highly location-sensitive; the defender must play directly inside or adjacent to its bounding box to stop it.\n- Location-Insensitive: A board state where multiple threats exist, but they are scattered across the board. A Triple Threat can be entirely location-insensitive (e.g., an Open 4 on the far left of the board, and a Closed 5 on the far right). The defender still loses, but the positional difference between the threats is irrelevant. This distinction is important when analyzing Colony Spam  strategies, where players continuously create location-insensitive threats to stretch the defender's resources across vast distances."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "s",
+      "id": "gnlgobl",
+      "title": "4 Formations and Tactics",
+      "collapsed": false,
+      "children": [
+        {
+          "type": "t",
+          "id": "u83lonn",
+          "md": "In HeXO, a \"formation\" is a specific pattern of pieces that players try to build or stop. Because the board is infinite, these clusters of pieces determine who has the advantage. Learning to recognize these formations is the fastest way to improve."
+        },
+        {
+          "type": "s",
+          "id": "y16n4qo",
+          "title": "4.1 The Triangle (3-cell) and Triangle Defense Theory",
+          "collapsed": false,
+          "children": [
+            {
+              "type": "t",
+              "id": "rt0l7r5",
+              "md": "The Triangle is exactly what it sounds like: three pieces arranged in a three-sided cluster. It was one of the very first formations discussed, originally highlighted in webgoatguy's video."
+            },
+            {
+              "type": "p",
+              "id": "7sorucn",
+              "board": "CgCg",
+              "title": "Triangle",
+              "note": "For a long time, players wondered if an isolated Triangle gave the attacker a forced win.",
+              "labels": [],
+              "htn": ""
+            },
+            {
+              "type": "s",
+              "id": "fs8h6a4",
+              "title": "Defense",
+              "collapsed": false,
+              "children": [
+                {
+                  "type": "t",
+                  "id": "34b1lsn",
+                  "md": "Early on, a basic defense against the Triangle became popular. However, __akra__, _apia_, and others quickly proved this defense is actually a trap. It loses by force, earning it the nickname \"Fool's Defense.\""
+                },
+                {
+                  "type": "p",
+                  "id": "ev1fx7n",
+                  "board": "EkCgAEA",
+                  "title": "Fool's Defense",
+                  "note": "",
+                  "labels": [],
+                  "htn": ""
+                },
+                {
+                  "type": "t",
+                  "id": "owpjcwq",
+                  "md": "Users like 9hl. and chaoticish spent days mapping out alternative defenses. They labeled the two best options \"Pair\" (placing two pieces right next to each other against the Triangle)"
+                },
+                {
+                  "type": "p",
+                  "id": "lusepp2",
+                  "board": "C0Cg",
+                  "title": "Pair Defense",
+                  "note": "",
+                  "labels": [],
+                  "htn": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

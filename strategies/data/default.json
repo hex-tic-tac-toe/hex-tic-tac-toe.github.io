@@ -1,8 +1,8 @@
 {
   "libraries": [
     {
-      "name": "Openings",
-      "url": "https://hex-tic-tac-toe.github.io/strategies/data/openings.json"
+      "name": "Hexopedia",
+      "url": "https://hex-tic-tac-toe.github.io/strategies/data/hexopedia.json"
     },
     {
       "name": "Mates",
