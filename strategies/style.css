@@ -296,7 +296,7 @@ html.light #board-area { background: var(--bg); }
 .doc-sec-hdr:hover .sec-link-btn { opacity:1; }
 .sec-link-btn:hover { color:var(--text); }
 
-.browser-compact .doc-sec-body { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:12px; align-items:start; }
+.browser-compact .doc-sec-body:not([hidden]) { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:12px; align-items:start; }
 .browser-compact .doc-sec-body > .doc-s,
 .browser-compact .doc-sec-body > .doc-t,
 .browser-compact .doc-sec-body > .doc-add-bar { grid-column:1 / -1; }
