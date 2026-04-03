@@ -121,7 +121,16 @@ const App = {
     const si = document.getElementById('input-size');
     const applySize = () => {
       const s = parseInt(si.value, 10); if (s < 2 || s > 32) return;
-      Editor.grid = HexGrid.create(s); Editor.nodeId = null; Editor.history = []; Editor.labels = [];
+      const prev  = Editor.grid;
+      const next  = HexGrid.create(s);
+      const max   = s - 1;
+      const dist  = (q, r) => (Math.abs(q) + Math.abs(r) + Math.abs(q + r)) / 2;
+      if (prev) {
+        for (const c of prev.cells.values())
+          if (c.state && dist(c.q, c.r) <= max) HexGrid.setState(next, c.q, c.r, c.state);
+        Editor.labels = Editor.labels.filter(l => dist(l.q, l.r) <= max);
+      }
+      Editor.grid = next; Editor.history = [];
       Editor._buildBoard(); Editor._syncFooter(); Editor._syncMode();
     };
     document.getElementById('btn-apply-size').addEventListener('click', applySize);
