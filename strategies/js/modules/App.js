@@ -137,7 +137,8 @@ const App = {
 
     document.getElementById('btn-copy-board').addEventListener('click', () => {
       const enc = URLCodec.encodeFull(Editor.grid, Editor.labels);
-      navigator.clipboard?.writeText(`${location.origin}${location.pathname}#${enc}`).then(() => App._toast('link copied'));
+      const shareUrl = `https://hexoboardshare.vercel.app/b/${enc}`;
+      navigator.clipboard?.writeText(shareUrl).then(() => App._toast('link copied'));
     });
 
     document.getElementById('note-toggle-btn').addEventListener('click', () => {
@@ -149,6 +150,14 @@ const App = {
     document.getElementById('notation-toggle-btn').addEventListener('click', () => {
       Editor.notationOpen = !Editor.notationOpen; Editor._syncPanels(); Editor._buildBoard();
     });
+
+    document.getElementById('btn-rotate-ccw')?.addEventListener('click', () => Editor.rotate(-1));
+    document.getElementById('btn-rotate-cw')?.addEventListener('click',  () => Editor.rotate(1));
+    document.getElementById('btn-mirror')?.addEventListener('click',     () => Editor.mirror());
+
+    document.getElementById('nf-load-bke')?.addEventListener('click',   () => App._importSingle(Notation.fromBKE(document.getElementById('nf-bke').value)));
+    document.getElementById('nf-load-htn')?.addEventListener('click',   () => App._importSingle(Notation.fromHTN(document.getElementById('nf-htn').value)));
+    document.getElementById('nf-load-axial')?.addEventListener('click', () => App._importSingle(Notation.fromAxial(document.getElementById('nf-axial').value)));
 
     document.getElementById('nf-copy-bke').addEventListener('click',   () => App._copy(document.getElementById('nf-bke').value));
     document.getElementById('nf-copy-htn').addEventListener('click',   () => App._copy(document.getElementById('nf-htn').value));
@@ -212,7 +221,7 @@ const App = {
     document.getElementById('btn-compact')?.addEventListener('click',       () => App._toggleCompact());
     document.getElementById('btn-back-to-top')?.addEventListener('click',   () => { document.getElementById('browser-main').scrollTo({ top: 0, behavior: 'smooth' }); });
 
-    document.getElementById('btn-theme')?.addEventListener('click', () => App._cycleTheme());
+    document.querySelectorAll('.btn-theme').forEach(b => b.addEventListener('click', () => App._cycleTheme()));
 
     document.getElementById('browser-main')?.addEventListener('scroll', e => {
       const btn = document.getElementById('btn-back-to-top');
@@ -267,16 +276,22 @@ const App = {
   },
 
   _initTooltips() {
-    const el = document.getElementById('tooltip');
-    document.addEventListener('mousemove', e => {
-      const target = e.target.closest('[data-tip]');
-      if (!target) { el.hidden = true; return; }
-      el.textContent = target.dataset.tip;
-      el.hidden = false;
-      el.style.left = Math.min(e.clientX + 14, window.innerWidth - el.offsetWidth - 8) + 'px';
-      el.style.top  = (e.clientY - el.offsetHeight - 8) + 'px';
+    const tip = document.getElementById('tooltip');
+    const show = target => {
+      tip.textContent = target.dataset.tip;
+      tip.hidden = false;
+      const r   = target.getBoundingClientRect();
+      const below = r.top < 80;
+      tip.style.top  = below ? (r.bottom + 6) + 'px' : (r.top - tip.offsetHeight - 6) + 'px';
+      tip.style.left = Math.max(4, Math.min(r.left + r.width / 2 - tip.offsetWidth / 2, window.innerWidth - tip.offsetWidth - 4)) + 'px';
+    };
+    document.addEventListener('mouseover', e => {
+      const t = e.target.closest('[data-tip]');
+      if (t) show(t); else tip.hidden = true;
     });
-    document.addEventListener('mouseleave', () => { el.hidden = true; });
+    document.addEventListener('mouseout', e => {
+      if (!e.relatedTarget?.closest('[data-tip]')) tip.hidden = true;
+    });
   },
 
   _initTheme() {
@@ -297,6 +312,8 @@ const App = {
     document.documentElement.classList.toggle('light', !useDark);
     const icons = { dark: '☾', light: '☀', system: '◑' };
     document.querySelectorAll('.btn-theme').forEach(b => b.textContent = icons[theme] || '◑');
+    if (UI.activeView === 'editor' && Editor.grid) Editor._buildBoard();
+    else if (UI.activeView === 'browser' && Browser.activeLibId) Browser.render(Browser.activeLibId, true);
   },
 
   _initCompact() {

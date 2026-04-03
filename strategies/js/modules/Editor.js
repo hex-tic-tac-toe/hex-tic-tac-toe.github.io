@@ -88,6 +88,8 @@ const Editor = {
     if (ba) ba.style.right = (noteW + notationW) + 'px';
 
     document.getElementById('note-toggle-btn')?.classList.toggle('active', Editor.noteOpen);
+    const toggles = document.getElementById('panel-toggles');
+    if (toggles) toggles.style.right = (noteW + notationW) + 'px';
     document.getElementById('notation-toggle-btn')?.classList.toggle('active', Editor.notationOpen);
 
     if (Editor.notationOpen) Editor.onBoardSync?.(Editor.grid);
@@ -134,6 +136,30 @@ const Editor = {
     if (!clear) Editor.labels.push({ q, r, mark: Editor._nextMark() });
     Editor._buildBoard();
     Editor._setDirty(true);
+  },
+
+  rotate(dir) {
+    const fn = dir > 0
+      ? (q, r) => ({ q: -r,   r: q + r })
+      : (q, r) => ({ q: q + r, r: -q  });
+    Editor._transformBoard(fn);
+  },
+
+  mirror() {
+    Editor._transformBoard((q, r) => ({ q: -q - r, r }));
+  },
+
+  _transformBoard(fn) {
+    const stones = [], labels = [];
+    for (const c of Editor.grid.cells.values())
+      if (c.state) stones.push({ ...fn(c.q, c.r), state: c.state });
+    for (const l of Editor.labels)
+      labels.push({ ...fn(l.q, l.r), mark: l.mark });
+    for (const c of Editor.grid.cells.values()) c.state = 0;
+    for (const s of stones) HexGrid.setState(Editor.grid, s.q, s.r, s.state);
+    Editor.labels = labels;
+    Editor.history = [];
+    Editor._buildBoard(); Editor._syncFooter(); Editor._setDirty(true);
   },
 
   bindPointer() {

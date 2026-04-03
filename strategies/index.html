@@ -48,6 +48,10 @@ permalink: /strategies/
     <span class="toolbar-label">label</span>
     <button class="btn" id="btn-label-mode" data-tip="Toggle letter / number labels">a</button>
     <span class="toolbar-hint">left-drag stones · right-drag labels · ctrl clears</span>
+    <span class="sep" style="margin:0 6px">—</span>
+    <button class="btn" id="btn-rotate-ccw" data-tip="Rotate 60° counter-clockwise">↺</button>
+    <button class="btn" id="btn-rotate-cw"  data-tip="Rotate 60° clockwise">↻</button>
+    <button class="btn" id="btn-mirror"     data-tip="Mirror (vertical axis)">⇔</button>
   </div>
 
   <div id="board-area"><svg id="board-svg"></svg></div>
@@ -71,15 +75,18 @@ permalink: /strategies/
     <div class="notation-inner">
       <div class="nf-section">
         <div class="nf-hdr"><span class="nf-label">BKE</span><span class="tip" data-tip="Boat-Kaitlyn-Epic — ring/offset, rotation-independent">?</span><button class="btn nf-copy" id="nf-copy-bke">⎘</button></div>
-        <textarea class="nf-out" id="nf-bke" readonly></textarea>
+        <textarea class="nf-out" id="nf-bke"></textarea>
+        <button class="btn nf-load" id="nf-load-bke" data-tip="Load into editor">↑ load</button>
       </div>
       <div class="nf-section">
         <div class="nf-hdr"><span class="nf-label">HTN</span><span class="tip" data-tip="Hexagonal Tic Tac Toe Notation — synthesized from board state">?</span><button class="btn nf-copy" id="nf-copy-htn">⎘</button></div>
-        <textarea class="nf-out" id="nf-htn" readonly></textarea>
+        <textarea class="nf-out" id="nf-htn"></textarea>
+        <button class="btn nf-load" id="nf-load-htn" data-tip="Load into editor">↑ load</button>
       </div>
       <div class="nf-section">
         <div class="nf-hdr"><span class="nf-label">Axial</span><span class="tip" data-tip="Axial (q,r) coordinates — standard programming format">?</span><button class="btn nf-copy" id="nf-copy-axial">⎘</button></div>
-        <textarea class="nf-out" id="nf-axial" readonly></textarea>
+        <textarea class="nf-out" id="nf-axial"></textarea>
+        <button class="btn nf-load" id="nf-load-axial" data-tip="Load into editor">↑ load</button>
       </div>
       <div class="nf-footer">to import, use the Convert tab</div>
     </div>

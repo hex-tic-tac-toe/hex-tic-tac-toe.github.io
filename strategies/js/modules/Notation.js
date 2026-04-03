@@ -76,18 +76,19 @@ const Notation = {
     for (const c of grid.cells.values()) {
       if (c.state === 1) x.push(c); else if (c.state === 2) o.push(c);
     }
-    const xs = Notation._sortStones(x), os = Notation._sortStones(o);
+    const xRest = Notation._sortStones(x.filter(c => !(c.q === 0 && c.r === 0)));
+    const os    = Notation._sortStones(o);
     const refMap = Notation._buildRefMap(os[0] || null);
     const fmt    = c => Notation._bkeCoord(c.q, c.r, refMap);
     const tokens = [];
     let xi = 0, oi = 0, turn = 0;
-    while (xi < xs.length || oi < os.length) {
-      if (turn % 2 === 0 && xi < xs.length) {
-        const a = xs[xi++], b = xi < xs.length ? xs[xi++] : null;
-        tokens.push('x ' + fmt(a) + (b ? ' ' + fmt(b) : ''));
-      } else if (turn % 2 === 1 && oi < os.length) {
+    while (oi < os.length || xi < xRest.length) {
+      if (turn % 2 === 0 && oi < os.length) {
         const a = os[oi++], b = oi < os.length ? os[oi++] : null;
         tokens.push('o ' + fmt(a) + (b ? ' ' + fmt(b) : ''));
+      } else if (turn % 2 === 1 && xi < xRest.length) {
+        const a = xRest[xi++], b = xi < xRest.length ? xRest[xi++] : null;
+        tokens.push('x ' + fmt(a) + (b ? ' ' + fmt(b) : ''));
       } else { turn++; continue; }
       turn++;
     }

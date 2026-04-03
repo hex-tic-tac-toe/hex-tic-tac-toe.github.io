@@ -239,13 +239,35 @@ const Browser = {
 
   _applySearch(q) {
     const query = q.toLowerCase().trim();
-    document.querySelectorAll('#browser-doc .doc-t, #browser-doc .doc-p').forEach(el => {
-      if (!query) { el.hidden = false; return; }
-      const id   = el.id.slice(3);
-      const node = Doc.find(Browser._doc, id)?.[0];
-      const text = node ? ((node.md||'') + (node.title||'') + (node.note||'')).toLowerCase() : '';
-      el.hidden = !text.includes(query);
-    });
+    const btn   = document.getElementById('btn-search-clear');
+    if (btn) btn.hidden = !q;
+
+    if (!query) {
+      document.querySelectorAll('#browser-doc .doc-node').forEach(el => el.hidden = false);
+      return;
+    }
+
+    const nodeMatches = node => {
+      if (node.type === 't') return (node.md||'').toLowerCase().includes(query);
+      if (node.type === 'p') return ((node.title||'') + ' ' + (node.note||'')).toLowerCase().includes(query);
+      if (node.type === 's') return (node.title||'').toLowerCase().includes(query) || (node.children||[]).some(c => nodeMatches(c));
+      return false;
+    };
+
+    const applyNode = (node, parentTitleMatch) => {
+      const el = document.getElementById('dn-' + node.id);
+      if (!el) return;
+      if (node.type === 's') {
+        const titleMatch = (node.title||'').toLowerCase().includes(query);
+        const anyMatch   = nodeMatches(node);
+        el.hidden = !anyMatch;
+        if (anyMatch) (node.children||[]).forEach(c => applyNode(c, titleMatch || parentTitleMatch));
+      } else {
+        el.hidden = parentTitleMatch ? false : !nodeMatches(node);
+      }
+    };
+
+    Browser._doc.forEach(node => applyNode(node, false));
   },
 
   _addBar(list, insertIdx) {
