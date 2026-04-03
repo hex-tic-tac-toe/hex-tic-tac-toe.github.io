@@ -130,15 +130,40 @@ const Browser = {
 
   _buildText(el, node) {
     if (Browser._editable) { const h = Browser._el('span','drag-handle','⠿'); el.appendChild(h); }
+
+    let monoActive = false;
+
     const view = document.createElement('div'); view.className = 'md-body';
     view.innerHTML = Markdown.render(node.md || '') || '<span class="md-placeholder">Click to edit…</span>';
-    el.appendChild(view);
+
+    const raw = document.createElement('pre'); raw.className = 'md-raw'; raw.hidden = true;
+    raw.textContent = node.md || '';
+
+    const monoBtn = document.createElement('button'); monoBtn.className = 'mono-toggle'; monoBtn.textContent = '{ }'; monoBtn.title = 'Toggle monospace view';
+    monoBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      monoActive = !monoActive;
+      monoBtn.classList.toggle('active', monoActive);
+      view.hidden = monoActive; raw.hidden = !monoActive;
+      raw.textContent = node.md || '';
+    });
+
+    el.appendChild(monoBtn); el.appendChild(view); el.appendChild(raw);
+
     if (Browser._editable) {
       const ta = document.createElement('textarea'); ta.className = 'doc-text-ta'; ta.value = node.md || ''; ta.hidden = true; ta.placeholder = 'Markdown…';
       const autosize = () => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; };
-      view.addEventListener('click', () => { view.hidden = true; ta.hidden = false; autosize(); ta.focus({ preventScroll: true }); });
+      const openEdit = () => { view.hidden = true; raw.hidden = true; ta.hidden = false; autosize(); ta.focus({ preventScroll: true }); };
+      view.addEventListener('click', openEdit);
+      raw.addEventListener('click', openEdit);
       ta.addEventListener('input', autosize);
-      ta.addEventListener('blur', () => { node.md = ta.value; view.innerHTML = Markdown.render(node.md) || '<span class="md-placeholder">Click to edit…</span>'; view.hidden = false; ta.hidden = true; Browser._save(); });
+      ta.addEventListener('blur', () => {
+        node.md = ta.value;
+        view.innerHTML = Markdown.render(node.md) || '<span class="md-placeholder">Click to edit…</span>';
+        raw.textContent = node.md;
+        view.hidden = monoActive; raw.hidden = !monoActive; ta.hidden = true;
+        Browser._save();
+      });
       ta.addEventListener('keydown', e => { if (e.key === 'Escape') ta.blur(); });
       const del = Browser._btn('✕', () => { Doc.remove(Browser._doc, node.id); Browser._save(); Browser._renderDoc(); });
       del.className += ' node-del-btn';
