@@ -349,11 +349,32 @@
             },
             {
               "type": "p",
-              "id": "7sorucn",
-              "board": "CgCg",
+              "id": "140mv0o",
+              "board": "EgCg",
               "title": "Triangle",
               "note": "For a long time, players wondered if an isolated Triangle gave the attacker a forced win.",
-              "labels": [],
+              "labels": [
+                [
+                  1,
+                  -2,
+                  "a"
+                ],
+                [
+                  -1,
+                  0,
+                  "b"
+                ],
+                [
+                  -1,
+                  1,
+                  "c"
+                ],
+                [
+                  1,
+                  1,
+                  "d"
+                ]
+              ],
               "htn": ""
             },
             {
@@ -372,25 +393,281 @@
                   "id": "ev1fx7n",
                   "board": "EkCgAEA",
                   "title": "Fool's Defense",
-                  "note": "",
-                  "labels": [],
+                  "note": "ac",
+                  "labels": [
+                    [
+                      1,
+                      -2,
+                      "a"
+                    ],
+                    [
+                      -1,
+                      0,
+                      "b"
+                    ],
+                    [
+                      -1,
+                      1,
+                      "c"
+                    ],
+                    [
+                      1,
+                      1,
+                      "d"
+                    ]
+                  ],
                   "htn": ""
                 },
                 {
                   "type": "t",
                   "id": "owpjcwq",
-                  "md": "Users like 9hl. and chaoticish spent days mapping out alternative defenses. They labeled the two best options \"Pair\" (placing two pieces right next to each other against the Triangle)"
+                  "md": "Users like 9hl. and chaoticish spent days mapping out alternative defenses. They labeled the two best options \"Pair\" (placing two pieces right next to each other against the Triangle) and \"Gap\" (leaving a single empty space between the defending pieces)."
                 },
                 {
                   "type": "p",
                   "id": "lusepp2",
                   "board": "C0Cg",
                   "title": "Pair Defense",
-                  "note": "",
-                  "labels": [],
+                  "note": "bd",
+                  "labels": [
+                    [
+                      -1,
+                      0,
+                      "b"
+                    ],
+                    [
+                      -1,
+                      1,
+                      "c"
+                    ]
+                  ],
+                  "htn": ""
+                },
+                {
+                  "type": "p",
+                  "id": "lntoesy",
+                  "board": "EiIBAQA",
+                  "title": "Gap Defense",
+                  "note": "cd",
+                  "labels": [
+                    [
+                      0,
+                      -1,
+                      "a"
+                    ],
+                    [
+                      -2,
+                      1,
+                      "b"
+                    ],
+                    [
+                      -2,
+                      2,
+                      "c"
+                    ],
+                    [
+                      0,
+                      2,
+                      "d"
+                    ]
+                  ],
                   "htn": ""
                 }
               ]
+            }
+          ]
+        },
+        {
+          "type": "s",
+          "id": "v6q9p7l",
+          "title": "4.2 The Isolated Open 3",
+          "collapsed": false,
+          "children": [
+            {
+              "type": "t",
+              "id": "7wlj1sn",
+              "md": "An Isolated Open 3 is a straight line of three pieces with empty space on both ends."
+            },
+            {
+              "type": "p",
+              "id": "z3iz5ka",
+              "board": "CoAg",
+              "title": "Isolated Open 3",
+              "note": "",
+              "labels": [],
+              "htn": ""
+            },
+            {
+              "type": "t",
+              "id": "3ev8ain",
+              "md": "While the Triangle is famous, the Isolated Open 3 is the true nightmare of HeXO. Users like chaoticish, finneon7, and meaf all agree that an Isolated Open 3 is practically impossible to defend. The reason is simple mathematics: an Isolated Open 3 threatens to become an Isolated Open 4 on the very next turn. Because it stretches in a straight line, it forces the defender to place pieces at the far ends, giving the attacker massive control over the center and allowing them to build a secondary attack. \nAs veganwater45 noted, if you let your opponent get an Isolated Open 3 without having a major threat of your own, you have likely already lost the game."
+            }
+          ]
+        },
+        {
+          "type": "s",
+          "id": "sw1py3i",
+          "title": "4.3 Rhombus Theory",
+          "collapsed": false,
+          "children": [
+            {
+              "type": "t",
+              "id": "o6ozzmg",
+              "md": "A Rhombus is a group of four pieces arranged in a diamond shape.\nAssuming perfect play, if an attacker completes a Rhombus and there are no other pieces nearby, it is a guaranteed win. It creates too many overlapping paths for the defender's two pieces to block."
+            },
+            {
+              "type": "p",
+              "id": "ms1a069",
+              "board": "Cgig",
+              "title": "Rhombus",
+              "note": "",
+              "labels": [],
+              "htn": ""
+            },
+            {
+              "type": "t",
+              "id": "qoupy78",
+              "md": "User printedinusa introduced a rather brilliant variation called the \"Offset Rhombus\" or \"Disjointed Rhombus.\""
+            },
+            {
+              "type": "p",
+              "id": "gvbjabf",
+              "board": "EAqAAAg",
+              "title": "Disjointed Rhombus",
+              "note": "",
+              "labels": [],
+              "htn": ""
+            },
+            {
+              "type": "t",
+              "id": "9qu9v32",
+              "md": "Instead of placing the fourth piece to complete the diamond perfectly, you place it one space further away. While this might look like a mistake, it actually creates longer, more flexible attack lines. It sacrifices immediate pressure, but builds a wider net that traps the defender."
+            }
+          ]
+        },
+        {
+          "type": "s",
+          "id": "wdbk3nk",
+          "title": "4.4 The Bone / Bowtie",
+          "collapsed": false,
+          "children": [
+            {
+              "type": "t",
+              "id": "4eoh3jr",
+              "md": "The Bone (sometimes called the Bowtie) is a group of five pieces that looks like two Triangles touching at the points.\nWhen chaoticish, 9hl., and meaf analyzed this shape, it was revealed to be an absolute monster. The Bone contains four open preemptives and a pair of Triples. If an attacker manages to place an isolated Bone on the board, the defender is completely doomed. It is mathematically undefendable."
+            },
+            {
+              "type": "p",
+              "id": "qmv9d91",
+              "board": "CqCg",
+              "title": "Bone",
+              "note": "",
+              "labels": [],
+              "htn": ""
+            }
+          ]
+        },
+        {
+          "type": "s",
+          "id": "9srji0z",
+          "title": "4.5 The Trapezoid and The Arch",
+          "collapsed": false,
+          "children": [
+            {
+              "type": "t",
+              "id": "6smw3pi",
+              "md": "The Trapezoid, also sometimes known as the Pentagon,  is a group of five cells arranged like a small boat.\n__akra__ and .tinodasurly studied this shape heavily. Like the Bone, it is a forced win if the opponent does not have their own immediate threats elsewhere."
+            },
+            {
+              "type": "p",
+              "id": "tklebfx",
+              "board": "Coig",
+              "title": "Trapezoid",
+              "note": "",
+              "labels": [],
+              "htn": ""
+            },
+            {
+              "type": "t",
+              "id": "tw3qly7",
+              "md": "The Arch, also sometimes known as the Banana, is a group of four pieces arranged in a curve."
+            },
+            {
+              "type": "p",
+              "id": "vqyhh0l",
+              "board": "CKIg",
+              "title": "Arch",
+              "note": "",
+              "labels": [],
+              "htn": ""
+            },
+            {
+              "type": "t",
+              "id": "9na75l7",
+              "md": "It functions very similarly to a Rhombus and is also a guaranteed win in isolation."
+            }
+          ]
+        },
+        {
+          "type": "s",
+          "id": "pbzylnw",
+          "title": "4.6 The Snowflake",
+          "collapsed": false,
+          "children": [
+            {
+              "type": "t",
+              "id": "n6klr4w",
+              "md": "The Snowflake is a massive, wrap-around winning pattern named by 9hl.. It happens when the attacker places their pieces in a circle around a single defender's piece."
+            },
+            {
+              "type": "p",
+              "id": "a6rkzne",
+              "board": "EKqiKCiA",
+              "title": "Snowflake",
+              "note": "",
+              "labels": [],
+              "htn": ""
+            },
+            {
+              "type": "t",
+              "id": "zim7su4",
+              "md": "By wrapping around the opponent, the attacker creates threats going outward in every direction. It is incredibly hard to block because the defender is trapped in the center while the attacker is allowed to expand endlessly outward."
+            }
+          ]
+        },
+        {
+          "type": "s",
+          "id": "e6k3scx",
+          "title": "4.7 The Quadtri and Detached Quadtri",
+          "collapsed": false,
+          "children": [
+            {
+              "type": "t",
+              "id": "9ly8hm5",
+              "md": "A \"Quadtri\" is exactly what it sounds like: a Quad (four-in-a-row) mixed with a Triangle."
+            },
+            {
+              "type": "p",
+              "id": "6vvqsg0",
+              "board": "ECIiAAg",
+              "title": "Quadtri",
+              "note": "",
+              "labels": [],
+              "htn": ""
+            },
+            {
+              "type": "t",
+              "id": "dyw6wir",
+              "md": "This formation was explored by meaf and 9hl. while trying to find ways to attack a heavily defended opponent.\n\nmeaf proposed the \"Detached Quadtri,\" where the Triangle part is built slightly separated from the Quad part.\nThis forces the defender to use their two pieces, breaking their defensive wall and allowing the attacker to slip through.\n"
+            },
+            {
+              "type": "p",
+              "id": "cmthwo9",
+              "board": "ECKCAAg",
+              "title": "Detached Quadtri",
+              "note": "",
+              "labels": [],
+              "htn": ""
             }
           ]
         }
