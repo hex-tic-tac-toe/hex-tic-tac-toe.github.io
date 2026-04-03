@@ -229,3 +229,5 @@ input:focus, textarea:focus { outline:none; border-color:var(--accent-dim); }
 .mono-toggle:hover { border-color:var(--border); color:var(--muted); }
 .mono-toggle.active { color:var(--accent); border-color:var(--accent-dim); opacity:1; }
 .md-raw { font-family:var(--font); font-size:12px; color:var(--muted); line-height:1.65; padding:10px 16px 10px 0; white-space:pre-wrap; word-break:break-word; cursor:text; }
+.md-body a { color:var(--accent); text-decoration:underline; text-underline-offset:2px; }
+.md-body a:hover { color:var(--text); }
