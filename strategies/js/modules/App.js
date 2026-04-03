@@ -229,8 +229,8 @@ const App = {
       }
     });
 
-    document.getElementById('htn-text').addEventListener('keydown', e => { if ((e.ctrlKey||e.metaKey) && e.key==='Enter') App._loadHtn(); });
-    document.getElementById('btn-htn-load').addEventListener('click', () => App._loadHtn());
+    document.getElementById('htn-text')?.addEventListener('keydown', e => { if ((e.ctrlKey||e.metaKey) && e.key==='Enter') App._loadHtn(); });
+    document.getElementById('btn-htn-load')?.addEventListener('click', () => App._loadHtn());
 
     window.addEventListener('hashchange', () => {
       const h = window.location.hash.slice(1);
