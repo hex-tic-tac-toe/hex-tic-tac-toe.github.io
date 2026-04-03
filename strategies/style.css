@@ -93,7 +93,7 @@ input:focus, textarea:focus { outline:none; border-color:var(--accent-dim); }
 .sec-actions { display:flex; gap:4px; margin-left:auto; }
 .sec-actions .btn { padding:2px 7px; font-size:9px; opacity:0; }
 .doc-sec-hdr:hover .sec-actions .btn { opacity:1; }
-.doc-sec-body { padding:8px 16px 8px 16px; }
+.doc-sec-body { padding:8px 16px 8px 20px; margin-left:14px; border-left:1px solid var(--border-hi); }
 
 .drag-handle { color:var(--dim); cursor:grab; font-size:14px; flex-shrink:0; }
 .drag-handle:hover { color:var(--muted); }
