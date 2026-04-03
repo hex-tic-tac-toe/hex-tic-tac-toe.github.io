@@ -18,16 +18,14 @@ const App = {
     LibManager.init(App._toast);
 
     const hash = window.location.hash.slice(1);
-    const bParam = new URLSearchParams(location.search).get('b');
-    const boardCode = bParam || (!hash.startsWith('b/') && hash !== 'd' && hash !== 'c' && hash);
-    if (boardCode) {
-      const decoded = URLCodec.decodeFull(boardCode);
+    const boardNav = !hash.startsWith('b/') && hash !== 'd' && hash !== 'c' && hash;
+    if (boardNav) {
+      const decoded = URLCodec.decodeFull(boardNav);
       if (decoded) {
         Editor.grid   = decoded.grid;
         Editor.labels = decoded.labels.map(l => ({ ...l, mark: l.mark ?? l.letter ?? 'a' }));
         document.getElementById('input-size').value = decoded.grid.s;
         Editor.noteOpen = decoded.labels.length > 0;
-        if (bParam) history.replaceState(null, '', location.pathname + '#' + bParam);
       } else { Editor.loadNode(null); }
     } else { Editor.loadNode(null); }
 
@@ -138,10 +136,33 @@ const App = {
     });
     document.getElementById('btn-save').addEventListener('click',  () => App._save());
 
+    document.getElementById('btn-copy-image').addEventListener('click', () => {
+      const svg  = document.getElementById('board-svg');
+      const xml  = new XMLSerializer().serializeToString(svg);
+      const blob = new Blob([xml], { type: 'image/svg+xml' });
+      const url  = URL.createObjectURL(blob);
+      const img  = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const scale  = 2;
+        canvas.width  = (svg.width.baseVal.value  || img.naturalWidth)  * scale;
+        canvas.height = (svg.height.baseVal.value || img.naturalHeight) * scale;
+        const ctx = canvas.getContext('2d');
+        ctx.scale(scale, scale);
+        ctx.drawImage(img, 0, 0);
+        URL.revokeObjectURL(url);
+        canvas.toBlob(b => {
+          navigator.clipboard.write([new ClipboardItem({ 'image/png': b })])
+            .then(() => App._toast('image copied'))
+            .catch(() => App._toast('not supported in this browser'));
+        });
+      };
+      img.src = url;
+    });
+
     document.getElementById('btn-copy-board').addEventListener('click', () => {
       const enc = URLCodec.encodeFull(Editor.grid, Editor.labels);
-      const shareUrl = `https://hexoboardshare.vercel.app/b/${enc}`;
-      navigator.clipboard?.writeText(shareUrl).then(() => App._toast('link copied'));
+      navigator.clipboard?.writeText(`${location.origin}${location.pathname}#${enc}`).then(() => App._toast('link copied'));
     });
 
     document.getElementById('note-toggle-btn').addEventListener('click', () => {
