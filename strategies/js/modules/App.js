@@ -18,13 +18,15 @@ const App = {
     LibManager.init(App._toast);
 
     const hash = window.location.hash.slice(1);
-    const boardNav = !hash.startsWith('b/') && hash !== 'd' && hash !== 'c' && hash;
-    if (boardNav) {
-      const decoded = URLCodec.decodeFull(boardNav);
+    const bParam = new URLSearchParams(location.search).get('b');
+    const boardCode = bParam || (!hash.startsWith('b/') && hash !== 'd' && hash !== 'c' && hash);
+    if (boardCode) {
+      const decoded = URLCodec.decodeFull(boardCode);
       if (decoded) {
         Editor.grid   = decoded.grid;
         Editor.labels = decoded.labels.map(l => ({ ...l, mark: l.mark ?? l.letter ?? 'a' }));
         document.getElementById('input-size').value = decoded.grid.s;
+        if (bParam) history.replaceState(null, '', location.pathname + '#' + bParam);
       } else { Editor.loadNode(null); }
     } else { Editor.loadNode(null); }
 
