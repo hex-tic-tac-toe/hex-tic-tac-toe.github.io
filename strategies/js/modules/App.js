@@ -26,6 +26,7 @@ const App = {
         Editor.grid   = decoded.grid;
         Editor.labels = decoded.labels.map(l => ({ ...l, mark: l.mark ?? l.letter ?? 'a' }));
         document.getElementById('input-size').value = decoded.grid.s;
+        Editor.noteOpen = decoded.labels.length > 0;
         if (bParam) history.replaceState(null, '', location.pathname + '#' + bParam);
       } else { Editor.loadNode(null); }
     } else { Editor.loadNode(null); }
