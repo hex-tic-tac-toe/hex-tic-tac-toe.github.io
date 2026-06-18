@@ -11,7 +11,7 @@ title: Home
 
 # Docs
 - <a href="https://docs.google.com/document/d/1GMXTh_Z4lMtaxvTwOIjMCyZmQJ8vUhnOBTBRNYGc-Uk/edit?usp=sharing" style="color: lightgray; text-decoration: underline;">Encyclopedia of HeXO Theory</a> by GameTabs
-- <a href="https://docs.google.com/document/d/1JpXZqWEqgPhhEhJxEID7tJPNbAtWcIwAz8_8aOEefyM/edit?usp=drivesdk" style="color: lightgray; text-decoration: underline;">HeXO Threat Theory</a> by Tenderloin365
+- <a href="https://docs.google.com/document/d/1JpXZqWEqgPhhEhJxEID7tJPNbAtWcIwAz8_8aOEefyM/edit?usp=drivesdk" style="color: lightgray; text-decoration: underline;">HeXO Threat Theory</a> by Tenderloin345
 - <a href="https://docs.google.com/spreadsheets/d/1iixnrexM7F2DqHyAUb8Jwu8SUPOUbcGgdnu-JvFQiSc/edit?usp=sharing" style="color: lightgray; text-decoration: underline;">List of documented unique preemptives</a> by Veganwater
 - <a href="https://docs.google.com/document/d/15G5aFGgi5b4D_G4uyGBNITGAYjpdBLpNRpEBYTqSpiw/edit?usp=sharing" style="color: lightgray; text-decoration: underline;">Hexo - Radius Theory</a> by Ryftedmage
 - <a href="https://github.com/hex-tic-tac-toe/hexagonal-tic-tac-toe-notation" style="color: lightgray; text-decoration: underline;">common board notation used for bots</a>
